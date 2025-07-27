@@ -1,14 +1,28 @@
 {
-	"recommendations": [
-		"biomejs.biome",
-		"streetsidesoftware.code-spell-checker",
-		"dangmai.workspace-default-settings",
-		"dbaeumer.vscode-eslint",
-		"EditorConfig.EditorConfig",
-		"esbenp.prettier-vscode",
-		"mjmlio.vscode-mjml",
-		"ryanluker.vscode-coverage-gutters",
-		"Vue.volar",
-		"vitest.explorer"
-	]
+  // Расширения, рекомендуемые для команды или workspace
+  "recommendations": [
+    // 🔧 Code Style & Formatter
+    "esbenp.prettier-vscode",           // Prettier для форматирования
+    "dbaeumer.vscode-eslint",           // ESLint (линтер JavaScript/TS)
+    "biomejs.biome",                    // Biome — альтернатива Prettier + ESLint
+
+    // 🌐 Frontend (Vue, HTML, MJML)
+    "Vue.volar",                        // Поддержка Vue 3 (Composition API, TypeScript)
+    "mjmlio.vscode-mjml",               // Поддержка MJML для адаптивной email-верстки
+
+    // 🧪 Тестирование и покрытие
+    "vitest.explorer",                  // Поддержка Vitest
+    "ryanluker.vscode-coverage-gutters", // Покрытие тестами прямо в редакторе
+
+    // 🧠 Поддержка конфигураций
+    "EditorConfig.EditorConfig",        // EditorConfig (кодстайл между IDE)
+    "dangmai.workspace-default-settings", // Глобальные настройки для workspace
+
+    // ✅ Spellchecking
+    "streetsidesoftware.code-spell-checker", // Проверка орфографии в коде
+
+    // 🐳 DevContainers / Docker (рекомендуется для `.devcontainer`)
+    "ms-vscode-remote.remote-containers",   // Remote DevContainers
+    "ms-azuretools.vscode-docker"           // Docker поддержка в VSCode
+  ]
 }
