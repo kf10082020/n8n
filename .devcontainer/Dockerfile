@@ -5,18 +5,21 @@ RUN apk add --no-cache --update \
     openssh \
     sudo \
     shadow \
-    bash
+    bash \
+    curl \
+    git
 
 # Даём пользователю node права на sudo без пароля
-RUN echo "node ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/node && \
+RUN echo "node ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/node && \
     chmod 0440 /etc/sudoers.d/node
 
 # Создаём и настраиваем рабочую директорию
-RUN mkdir /workspaces && chown node:node /workspaces
+RUN mkdir -p /workspaces && chown node:node /workspaces
 
 # Переключаемся на пользователя node
 USER node
 
-# Создаём кэш для pnpm и настраиваем глобальный путь
+# Подготавливаем глобальное хранилище pnpm
 RUN mkdir -p ~/.pnpm-store && \
+    corepack enable && \
     pnpm config set store-dir ~/.pnpm-store --global
