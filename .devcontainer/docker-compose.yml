@@ -2,6 +2,7 @@ version: '3.8'
 
 volumes:
   postgres-data:
+  n8n-data:   # 💾 volume для записи файлов (например, voice.ogg)
 
 services:
   postgres:
@@ -23,12 +24,13 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ..:/workspaces:cached
+      - ..:/workspaces:cached              # 📁 твой проект
+      - n8n-data:/data                     # 📂 хранилище для voice.ogg и др.
     working_dir: /workspaces
-    command: sleep infinity
+    command: sleep infinity               # 💤 ручной запуск (удобно для разработки)
     ports:
-      - 5678:5678   # отладка
-      - 8080:8080   # веб-интерфейс n8n (опционально, если будет использоваться)
+      - 5678:5678                         # 🔧 Node.js debug
+      - 8080:8080                         # 🌐 n8n UI
     environment:
       DB_TYPE: postgresdb
       DB_POSTGRESDB_HOST: postgres
@@ -36,7 +38,7 @@ services:
       DB_POSTGRESDB_USER: postgres
       DB_POSTGRESDB_PASSWORD: password
       GENERIC_TIMEZONE: Europe/Kyiv
-      N8N_BASIC_AUTH_ACTIVE: "false"     # можно включить позже
+      N8N_BASIC_AUTH_ACTIVE: "false"
       N8N_DISABLE_PRODUCTION_MAIN_MENU: "true"
     depends_on:
       postgres:
