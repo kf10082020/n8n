@@ -18,24 +18,122 @@
       "name": "n8n Form Trigger",
       "type": "n8n-nodes-base.formTrigger",
       "typeVersion": 2,
-      "position": [
-        620,
-        580
-      ],
+      "position": [620, 580],
       "webhookId": "d1cba915-ca18-4425-bcfb-133205fc815a"
     },
     {
-      "parameters": {},
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json[\"code\"] }}",
+              "operation": "equal",
+              "value2": 1
+            },
+            {
+              "value1": "={{ $json[\"code\"] }}",
+              "operation": "equal",
+              "value2": 2
+            }
+          ]
+        }
+      },
       "id": "0f4dfe66-51c0-4378-9eab-680f8140a572",
       "name": "Switch",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 2,
-      "position": [
-        800,
-        580
-      ]
+      "position": [800, 580]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "result",
+              "value": "Code was 1"
+            }
+          ]
+        }
+      },
+      "id": "a1",
+      "name": "Set 1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [980, 460]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "result",
+              "value": "Code was 2"
+            }
+          ]
+        }
+      },
+      "id": "a2",
+      "name": "Set 2",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [980, 580]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "result",
+              "value": "Code was unknown"
+            }
+          ]
+        }
+      },
+      "id": "a3",
+      "name": "Set Default",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [980, 700]
     }
   ],
+  "connections": {
+    "n8n Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Set 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Default",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
   "pinData": {
     "n8n Form Trigger": [
       {
@@ -51,19 +149,6 @@
         }
       }
     ]
-  },
-  "connections": {
-    "n8n Form Trigger": {
-      "main": [
-        [
-          {
-            "node": "Switch",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    }
   },
   "active": false,
   "settings": {
