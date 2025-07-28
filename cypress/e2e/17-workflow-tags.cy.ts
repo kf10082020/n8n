@@ -8,19 +8,24 @@ const TEST_TAGS = ['Tag 1', 'Tag 2', 'Tag 3', 'Tag 4', 'Tag 5'];
 describe('Workflow tags', () => {
 	beforeEach(() => {
 		wf.actions.visit();
+		cy.log('Visited workflow page');
 	});
 
 	it('should create and attach tags inline', () => {
+		cy.log('Creating and attaching tags inline');
 		wf.getters.createTagButton().click();
 		wf.actions.addTags(TEST_TAGS.slice(0, 2));
 		wf.getters.tagPills().should('have.length', 2);
+
 		wf.getters.nthTagPill(1).click();
 		wf.actions.addTags(TEST_TAGS[1].toUpperCase());
 		wf.getters.tagPills().should('have.length', 3);
+
 		wf.getters.isWorkflowSaved();
 	});
 
 	it('should create tags via modal', () => {
+		cy.log('Creating tags via tag manager modal');
 		wf.actions.openTagManagerModal();
 
 		const tags = TEST_TAGS.slice(3);
@@ -38,6 +43,7 @@ describe('Workflow tags', () => {
 	});
 
 	it('should delete all tags via modal', () => {
+		cy.log('Deleting all tags via tag manager modal');
 		wf.actions.openTagManagerModal();
 
 		TEST_TAGS.forEach(() => {
@@ -47,37 +53,46 @@ describe('Workflow tags', () => {
 		});
 
 		cy.contains('Done').click();
+
 		wf.getters.createTagButton().click();
-		wf.getters.tagsInDropdown().should('have.length', 0); // none stored
-		wf.getters.tagPills().should('have.length', 0); // none attached
+		wf.getters.tagsInDropdown().should('have.length', 0);
+		wf.getters.tagPills().should('have.length', 0);
 	});
 
 	it('should detach a tag inline by clicking on X on tag pill', () => {
+		cy.log('Detaching tag inline by clicking on X');
 		wf.getters.createTagButton().click();
 		wf.actions.addTags(TEST_TAGS);
+
 		wf.getters.nthTagPill(1).click();
 		wf.getters.tagsDropdown().find('.el-tag__close').first().click();
 		cy.get('body').click(0, 0);
+
 		wf.getters.workflowTags().click();
 		wf.getters.tagPills().should('have.length', TEST_TAGS.length - 1);
 	});
 
 	it('should detach a tag inline by clicking on dropdown list item', () => {
+		cy.log('Detaching tag inline by clicking dropdown list item');
 		wf.getters.createTagButton().click();
 		wf.actions.addTags(TEST_TAGS);
+
 		wf.getters.workflowTagsContainer().click();
 		wf.getters.tagsInDropdown().filter('.selected').first().click();
 		cy.get('body').click(0, 0);
+
 		wf.getters.workflowTags().click();
 		wf.getters.tagPills().should('have.length', TEST_TAGS.length - 1);
 	});
 
 	it('should not show non existing tag as a selectable option', () => {
+		cy.log('Verifying non-existing tag is not selectable');
 		const NON_EXISTING_TAG = 'My Test Tag';
 
 		wf.getters.createTagButton().click();
 		wf.actions.addTags(TEST_TAGS);
 		cy.get('body').click(0, 0);
+
 		wf.getters.workflowTags().click();
 		wf.getters.workflowTagsInput().type(NON_EXISTING_TAG);
 
