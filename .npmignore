@@ -1,28 +1,38 @@
-dist/test
-dist/**/*.{js.map}
+# === Сборочные артефакты ===
+dist/
+!dist/**/*.d.ts        # Оставить типы, если они нужны для публикации
+!dist/**/*.js          # Оставить js, если это конечный билд
+dist/test              # Исключить тесты из dist
+dist/**/*.js.map       # Исключить sourcemaps
 
+# === Служебные файлы macOS ===
 .DS_Store
 
-# local env files
+# === Локальные переменные окружения ===
 .env.local
 .env.*.local
 
-# Log files
+# === Логи ===
 yarn-debug.log*
 yarn-error.log*
+npm-debug.log*
 
-# Editor directories and files
-.idea
-.vscode
+# === Папки и файлы редакторов ===
+.idea/
+.vscode/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
-*.sw*
+*.sw?
 
+# === Конфигурационные файлы, не нужные в npm-пакете ===
 .editorconfig
 .eslintrc.js
 tsconfig.json
-
-.turbo
+tsconfig.*.json
 *.tsbuildinfo
+
+# === Кэш и мета-файлы монореп ===
+.turbo/
+.pnpm-debug.log*
