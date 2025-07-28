@@ -8,100 +8,63 @@ describe('Data transformation expressions', () => {
 		wf.actions.visit();
 	});
 
-	it('$json + native string methods', () => {
-		wf.actions.addInitialNodeToCanvas('Schedule Trigger', { keepNdvOpen: true });
-		ndv.actions.setPinnedData([{ myStr: 'Monday' }]);
-		ndv.actions.close();
-		addEditFields();
+	const runExpressionTest = (label: string, pinnedData: object[], input: string, expected: string) => {
+		it(label, () => {
+			wf.actions.addInitialNodeToCanvas('Schedule Trigger', { keepNdvOpen: true });
+			ndv.actions.setPinnedData(pinnedData);
+			ndv.actions.close();
+			addEditFields();
 
-		const input = '{{$json.myStr.toLowerCase() + " is " + "today".toUpperCase()';
-		const output = 'monday is TODAY';
+			ndv.getters.inlineExpressionEditorInput().clear().type(input);
+			ndv.getters.inlineExpressionEditorOutput().should('have.text', expected);
 
-		ndv.getters.inlineExpressionEditorInput().clear().type(input);
-		ndv.getters.inlineExpressionEditorOutput().should('have.text', output);
-		ndv.actions.execute();
-		ndv.getters.outputDataContainer().should('be.visible');
-		ndv.getters.outputDataContainer().contains(output);
-	});
+			ndv.actions.execute();
+			ndv.getters.outputDataContainer().should('be.visible');
+			ndv.getters.outputDataContainer().contains(expected);
+		});
+	};
 
-	it('$json + n8n string methods', () => {
-		wf.actions.addInitialNodeToCanvas('Schedule Trigger', { keepNdvOpen: true });
-		ndv.actions.setPinnedData([{ myStr: 'hello@n8n.io is an email' }]);
-		ndv.actions.close();
-		addEditFields();
+	runExpressionTest(
+		'$json + native string methods',
+		[{ myStr: 'Monday' }],
+		'{{$json.myStr.toLowerCase() + " is " + "today".toUpperCase()}}',
+		'monday is TODAY'
+	);
 
-		const input = '{{$json.myStr.extractEmail() + " " + $json.myStr.isEmpty()';
-		const output = 'hello@n8n.io false';
+	runExpressionTest(
+		'$json + n8n string methods',
+		[{ myStr: 'hello@n8n.io is an email' }],
+		'{{$json.myStr.extractEmail() + " " + $json.myStr.isEmpty()}}',
+		'hello@n8n.io false'
+	);
 
-		ndv.getters.inlineExpressionEditorInput().clear().type(input);
-		ndv.getters.inlineExpressionEditorOutput().should('have.text', output);
-		ndv.actions.execute();
-		ndv.getters.outputDataContainer().should('be.visible');
-		ndv.getters.outputDataContainer().contains(output);
-	});
+	runExpressionTest(
+		'$json + native numeric methods',
+		[{ myNum: 9.123 }],
+		'{{$json.myNum.toPrecision(3)}}',
+		'9.12'
+	);
 
-	it('$json + native numeric methods', () => {
-		wf.actions.addInitialNodeToCanvas('Schedule Trigger', { keepNdvOpen: true });
-		ndv.actions.setPinnedData([{ myNum: 9.123 }]);
-		ndv.actions.close();
-		addEditFields();
+	runExpressionTest(
+		'$json + n8n numeric methods (again)',
+		[{ myStr: 'hello@n8n.io is an email' }],
+		'{{$json.myStr.extractEmail() + " " + $json.myStr.isEmpty()}}',
+		'hello@n8n.io false'
+	);
 
-		const input = '{{$json.myNum.toPrecision(3)';
-		const output = '9.12';
+	runExpressionTest(
+		'$json + native array access',
+		[{ myArr: [1, 2, 3] }],
+		'{{$json.myArr.includes(1) + " " + $json.myArr[2]}}',
+		'true 3'
+	);
 
-		ndv.getters.inlineExpressionEditorInput().clear().type(input);
-		ndv.getters.inlineExpressionEditorOutput().should('have.text', output);
-		ndv.actions.execute();
-		ndv.getters.outputDataContainer().should('be.visible');
-		ndv.getters.outputDataContainer().contains(output);
-	});
-
-	it('$json + n8n numeric methods', () => {
-		wf.actions.addInitialNodeToCanvas('Schedule Trigger', { keepNdvOpen: true });
-		ndv.actions.setPinnedData([{ myStr: 'hello@n8n.io is an email' }]);
-		ndv.actions.close();
-		addEditFields();
-
-		const input = '{{$json.myStr.extractEmail() + " " + $json.myStr.isEmpty()';
-		const output = 'hello@n8n.io false';
-
-		ndv.getters.inlineExpressionEditorInput().clear().type(input);
-		ndv.getters.inlineExpressionEditorOutput().should('have.text', output);
-		ndv.actions.execute();
-		ndv.getters.outputDataContainer().should('be.visible');
-		ndv.getters.outputDataContainer().contains(output);
-	});
-
-	it('$json + native array access', () => {
-		wf.actions.addInitialNodeToCanvas('Schedule Trigger', { keepNdvOpen: true });
-		ndv.actions.setPinnedData([{ myArr: [1, 2, 3] }]);
-		ndv.actions.close();
-		addEditFields();
-		const input = '{{$json.myArr.includes(1) + " " + $json.myArr[2]';
-		const output = 'true 3';
-
-		ndv.getters.inlineExpressionEditorInput().clear().type(input);
-		ndv.getters.inlineExpressionEditorOutput().should('have.text', output);
-		ndv.actions.execute();
-		ndv.getters.outputDataContainer().find('[class*=value_]').should('exist');
-		ndv.getters.outputDataContainer().find('[class*=value_]').should('contain', output);
-	});
-
-	it('$json + n8n array methods', () => {
-		wf.actions.addInitialNodeToCanvas('Schedule Trigger', { keepNdvOpen: true });
-		ndv.actions.setPinnedData([{ myArr: [1, 2, 3] }]);
-		ndv.actions.close();
-		addEditFields();
-
-		const input = '{{$json.myArr.first() + " " + $json.myArr.last()';
-		const output = '1 3';
-
-		ndv.getters.inlineExpressionEditorInput().clear().type(input);
-		ndv.getters.inlineExpressionEditorOutput().should('have.text', output);
-		ndv.actions.execute();
-		ndv.getters.outputDataContainer().find('[class*=value_]').should('exist');
-		ndv.getters.outputDataContainer().find('[class*=value_]').should('contain', output);
-	});
+	runExpressionTest(
+		'$json + n8n array methods',
+		[{ myArr: [1, 2, 3] }],
+		'{{$json.myArr.first() + " " + $json.myArr.last()}}',
+		'1 3'
+	);
 });
 
 // ----------------------------------
