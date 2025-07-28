@@ -1,10 +1,22 @@
 diff --git a/index.d.ts b/index.d.ts
-index f8f89c567f394a538018bfdf11c28dc15e9c9fdc..f3d1cd426711f1f714744474604bd7e321073983 100644
+index f8f89c567f394a538018bfdf11c28dc15e9c9fdc..9c78b5f80de8bd9bfe4ac10866a2554f2e0e81f9 100644
 --- a/index.d.ts
 +++ b/index.d.ts
-@@ -1,4 +1,4 @@
+@@ -1,4 +1,9 @@
  /// <reference types="node"/>
  
--export function decode(str: string | Buffer): string;
-+export function decode(str: string | Buffer): Buffer;
- export function encode(str: string | Buffer): string;
+- export function decode(str: string | Buffer): string;
++/**
++ * Decode a uuencoded string or buffer.
++ * @param input Encoded input as string or Buffer/Uint8Array.
++ * @returns Decoded binary data as Buffer.
++ */
++export function decode(input: string | Buffer | Uint8Array): Buffer;
++
+ /**
+  * Encode a string or buffer using uuencode.
+  * @param input Raw input as string or Buffer/Uint8Array.
+  * @returns Encoded uuencoded string.
+  */
+-export function encode(str: string | Buffer): string;
++export function encode(input: string | Buffer | Uint8Array): string;
