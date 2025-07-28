@@ -1,20 +1,36 @@
+# 📄 Документация
 **/*.md
+
+# 🔐 Переменные окружения
 **/.env
+
+# ⚙️ Кэш и временные файлы
 .cache
-assets
+*.tsbuildinfo
+
+# 🗂️ Node.js зависимости и сборки
 node_modules
-packages/node-dev
 packages/**/node_modules
 packages/**/dist
 packages/**/.turbo
+
+# 🧪 Тесты
 packages/**/*.test.*
+packages/cli/dist/**/e2e.*
+
+# 🐳 Docker файлы, которые не нужны внутри контейнера
+docker/compose
+docker/**/Dockerfile
+
+# 🧠 Инфраструктурные файлы
 .git
 .github
 !.github/scripts
-*.tsbuildinfo
-packages/cli/dist/**/e2e.*
-docker/compose
-docker/**/Dockerfile
+
+# 🧠 IDE и окружения
 .vscode
 cypress
 test-workflows
+
+# 🛠️ Dev-пакеты и сборки
+packages/node-dev
