@@ -1,28 +1,100 @@
 {
-	"id": 200,
-	"planId": 1,
-	"pruneExecutionsInterval": 168,
-	"monthlyExecutionsLimit": 1000,
-	"activeWorkflowsLimit": 20,
-	"credentialsLimit": 100,
-	"supportTier": "community",
-	"displayName": "Trial",
-	"enabledFeatures": ["userManagement", "advancedExecutionFilters", "sharing"],
-	"licenseFeatures": {
-		"feat:sharing": true,
-		"feat:advancedExecutionFilters": true,
-		"quota:users": -1,
-		"quota:maxVariables": -1,
-		"feat:variables": true
-	},
-	"metadata": {
-		"version": "v1",
-		"group": "trial",
-		"slug": "trial-2",
-		"trial": {
-			"length": 14,
-			"gracePeriod": 3
-		}
-	},
-	"expirationDate": "2023-08-30T15:47:27.611Z"
+  "name": "Plan Check Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "check-plan",
+        "httpMethod": "POST",
+        "options": {}
+      },
+      "id": "a1-webhook",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [300, 300],
+      "webhookId": "check-plan"
+    },
+    {
+      "parameters": {
+        "values": {
+          "boolean": [
+            {
+              "name": "original",
+              "value": true
+            }
+          ],
+          "string": [
+            {
+              "name": "plan",
+              "value": "Trial"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2-set",
+      "name": "Set Plan Info",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [520, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://webhook.site/test",
+        "method": "POST",
+        "jsonParameters": true,
+        "options": {},
+        "bodyParametersJson": "{ \"plan\": \"Trial\", \"original\": true }"
+      },
+      "id": "c3-http",
+      "name": "Check Plan via HTTP",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [740, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Plan Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Plan Info": {
+      "main": [
+        [
+          {
+            "node": "Check Plan via HTTP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "Webhook Trigger": [
+      {
+        "json": {
+          "plan": "Trial",
+          "original": true
+        }
+      }
+    ]
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "versionId": "plan-check-v1",
+  "id": "planCheckWorkflow",
+  "tags": [],
+  "meta": {
+    "instanceId": "fixture-plan-check-instance"
+  }
 }
