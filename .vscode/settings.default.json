@@ -1,6 +1,9 @@
 {
+	// Форматтеры
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.formatOnSave": true,
+
+	// Biome как форматтер для JS/TS/JSON/JSONC
 	"[javascript]": {
 		"editor.defaultFormatter": "biomejs.biome"
 	},
@@ -13,25 +16,33 @@
 	"[jsonc]": {
 		"editor.defaultFormatter": "biomejs.biome"
 	},
+
+	// Автодействия на сохранение
 	"editor.codeActionsOnSave": {
 		"quickfix.biome": "explicit",
 		"source.organizeImports.biome": "never"
 	},
+
+	// Исключения из поиска
 	"search.exclude": {
-		"node_modules": true,
-		"dist": true,
+		"**/node_modules": true,
+		"**/dist": true,
 		"pnpm-lock.yaml": true,
 		"**/*.snapshot.json": true,
 		"test-workflows": true
 	},
+
+	// TypeScript конфигурация
 	"typescript.format.enable": false,
 	"typescript.tsdk": "node_modules/typescript/lib",
-	"workspace-default-settings.runOnActivation": true,
+
+	// Prettier конфигурация
 	"prettier.prettierPath": "node_modules/prettier/index.cjs",
+
+	// ESLint
 	"eslint.probe": ["javascript", "typescript", "vue"],
-	"eslint.workingDirectories": [
-		{
-			"mode": "auto"
-		}
-	]
+	"eslint.workingDirectories": [{ "mode": "auto" }],
+
+	// Автозапуск workspace-default-settings
+	"workspace-default-settings.runOnActivation": true
 }
