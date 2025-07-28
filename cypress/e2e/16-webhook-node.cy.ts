@@ -15,98 +15,62 @@ describe('Webhook Trigger node', () => {
 		workflowPage.actions.visit();
 	});
 
-	it('should listen for a GET request', () => {
-		simpleWebhookCall({ method: 'GET', webhookPath: nanoid(), executeNow: true });
-	});
+	const methods = ['GET', 'POST', 'DELETE', 'HEAD', 'PATCH', 'PUT'];
 
-	it('should listen for a POST request', () => {
-		simpleWebhookCall({ method: 'POST', webhookPath: nanoid(), executeNow: true });
-	});
-
-	it('should listen for a DELETE request', () => {
-		simpleWebhookCall({ method: 'DELETE', webhookPath: nanoid(), executeNow: true });
-	});
-	it('should listen for a HEAD request', () => {
-		simpleWebhookCall({ method: 'HEAD', webhookPath: nanoid(), executeNow: true });
-	});
-	it('should listen for a PATCH request', () => {
-		simpleWebhookCall({ method: 'PATCH', webhookPath: nanoid(), executeNow: true });
-	});
-	it('should listen for a PUT request', () => {
-		simpleWebhookCall({ method: 'PUT', webhookPath: nanoid(), executeNow: true });
-	});
-
-	it('should listen for a GET request and respond with Respond to Webhook node', () => {
-		const webhookPath = nanoid();
-		simpleWebhookCall({
-			method: 'GET',
-			webhookPath,
-			executeNow: false,
-			respondWith: 'Respond to Webhook',
+	methods.forEach((method) => {
+		it(`should listen for a ${method} request`, () => {
+			simpleWebhookCall({ method, webhookPath: nanoid(), executeNow: true });
 		});
+	});
+
+	it('should respond with data from Respond to Webhook node', () => {
+		const webhookPath = nanoid();
+		simpleWebhookCall({ method: 'GET', webhookPath, executeNow: false, respondWith: 'Respond to Webhook' });
 
 		ndv.getters.backToCanvas().click();
-
 		addEditFields();
-
 		ndv.getters.backToCanvas().click({ force: true });
 
 		workflowPage.actions.addNodeToCanvas('Respond to Webhook');
-
 		workflowPage.actions.executeWorkflow();
 		cy.wait(waitForWebhook);
 
-		cy.request<{ MyValue: number }>('GET', `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`).then(
-			(response) => {
-				expect(response.status).to.eq(200);
-				expect(response.body.MyValue).to.eq(1234);
-			},
-		);
+		cy.request<{ MyValue: number }>(`GET`, `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`).then((res) => {
+			expect(res.status).to.eq(200);
+			expect(res.body.MyValue).to.eq(1234);
+		});
 	});
 
-	it('should listen for a GET request and respond custom status code 201', () => {
+	it('should respond with custom status code 201', () => {
 		const webhookPath = nanoid();
-		simpleWebhookCall({
-			method: 'GET',
-			webhookPath,
-			executeNow: false,
-			responseCode: 201,
-		});
+		simpleWebhookCall({ method: 'GET', webhookPath, executeNow: false, responseCode: 201 });
 
 		ndv.actions.execute();
 		cy.wait(waitForWebhook);
 
-		cy.request('GET', `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`).then((response) => {
-			expect(response.status).to.eq(201);
+		cy.request('GET', `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`).then((res) => {
+			expect(res.status).to.eq(201);
 		});
 	});
 
-	it('should listen for a GET request and respond with last node', () => {
+	it('should respond with data from Last Node', () => {
 		const webhookPath = nanoid();
-		simpleWebhookCall({
-			method: 'GET',
-			webhookPath,
-			executeNow: false,
-			respondWith: 'Last Node',
-		});
+		simpleWebhookCall({ method: 'GET', webhookPath, executeNow: false, respondWith: 'Last Node' });
+
 		ndv.getters.backToCanvas().click();
-
 		addEditFields();
-
 		ndv.getters.backToCanvas().click({ force: true });
 
 		workflowPage.actions.executeWorkflow();
 		cy.wait(waitForWebhook);
 
-		cy.request<{ MyValue: number }>('GET', `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`).then(
-			(response) => {
-				expect(response.status).to.eq(200);
-				expect(response.body.MyValue).to.eq(1234);
-			},
-		);
+		cy.request<{ MyValue: number }>('GET', `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`).then((res) => {
+			expect(res.status).to.eq(200);
+			expect(res.body.MyValue).to.eq(1234);
+		});
 	});
 
-	it('should listen for a GET request and respond with last node binary data', () => {
+	it('should respond with binary data from Last Node', () => {
 		const webhookPath = nanoid();
 		simpleWebhookCall({
 			method: 'GET',
@@ -115,15 +79,14 @@ describe('Webhook Trigger node', () => {
 			respondWith: 'Last Node',
 			responseData: 'First Entry Binary',
 		});
-		ndv.getters.backToCanvas().click();
 
+		ndv.getters.backToCanvas().click();
 		workflowPage.actions.addNodeToCanvas(EDIT_FIELDS_SET_NODE_NAME);
 		workflowPage.actions.openNode(EDIT_FIELDS_SET_NODE_NAME);
 		ndv.getters.assignmentCollectionAdd('assignments').click();
 		ndv.getters.assignmentName('assignments').type('data').find('input').blur();
 		ndv.getters.assignmentType('assignments').click();
 		ndv.getters.assignmentValue('assignments').paste(cowBase64);
-
 		ndv.getters.backToCanvas().click();
 
 		workflowPage.actions.addNodeToCanvas('Convert to File');
@@ -139,15 +102,13 @@ describe('Webhook Trigger node', () => {
 		workflowPage.actions.executeWorkflow();
 		cy.wait(waitForWebhook);
 
-		cy.request<{ data: unknown }>('GET', `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`).then(
-			(response) => {
-				expect(response.status).to.eq(200);
-				expect(Object.keys(response.body).includes('data')).to.be.true;
-			},
-		);
+		cy.request<{ data: unknown }>('GET', `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`).then((res) => {
+			expect(res.status).to.eq(200);
+			expect(Object.keys(res.body)).to.include('data');
+		});
 	});
 
-	it('should listen for a GET request and respond with an empty body', () => {
+	it('should respond with an empty body', () => {
 		const webhookPath = nanoid();
 		simpleWebhookCall({
 			method: 'GET',
@@ -156,25 +117,20 @@ describe('Webhook Trigger node', () => {
 			respondWith: 'Last Node',
 			responseData: 'No Response Body',
 		});
+
 		ndv.actions.execute();
 		cy.wait(waitForWebhook);
-		cy.request<{ MyValue: unknown }>('GET', `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`).then(
-			(response) => {
-				expect(response.status).to.eq(200);
-				expect(response.body.MyValue).to.be.undefined;
-			},
-		);
+
+		cy.request<{ MyValue: unknown }>('GET', `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`).then((res) => {
+			expect(res.status).to.eq(200);
+			expect(res.body.MyValue).to.be.undefined;
+		});
 	});
 
-	it('should listen for a GET request with Basic Authentication', () => {
+	it('should handle Basic Auth', () => {
 		const webhookPath = nanoid();
-		simpleWebhookCall({
-			method: 'GET',
-			webhookPath,
-			executeNow: false,
-			authentication: 'Basic Auth',
-		});
-		// add credentials
+		simpleWebhookCall({ method: 'GET', webhookPath, executeNow: false, authentication: 'Basic Auth' });
+
 		workflowPage.getters.nodeCredentialsSelect().click();
 		workflowPage.getters.nodeCredentialsCreateOption().click();
 		credentialsModal.getters.credentialsEditModal().should('be.visible');
@@ -182,42 +138,29 @@ describe('Webhook Trigger node', () => {
 
 		ndv.actions.execute();
 		cy.wait(waitForWebhook);
+
 		cy.request({
 			method: 'GET',
 			url: `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`,
-			auth: {
-				user: 'username',
-				pass: 'password',
-			},
+			auth: { user: 'username', pass: 'password' },
 			failOnStatusCode: false,
-		})
-			.then((response) => {
-				expect(response.status).to.eq(403);
-			})
-			.then(() => {
-				cy.request({
-					method: 'GET',
-					url: `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`,
-					auth: {
-						user: 'test',
-						pass: 'test',
-					},
-					failOnStatusCode: true,
-				}).then((response) => {
-					expect(response.status).to.eq(200);
-				});
-			});
+		}).then((res) => {
+			expect(res.status).to.eq(403);
+		});
+
+		cy.request({
+			method: 'GET',
+			url: `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`,
+			auth: { user: 'test', pass: 'test' },
+		}).then((res) => {
+			expect(res.status).to.eq(200);
+		});
 	});
 
-	it('should listen for a GET request with Header Authentication', () => {
+	it('should handle Header Auth', () => {
 		const webhookPath = nanoid();
-		simpleWebhookCall({
-			method: 'GET',
-			webhookPath,
-			executeNow: false,
-			authentication: 'Header Auth',
-		});
-		// add credentials
+		simpleWebhookCall({ method: 'GET', webhookPath, executeNow: false, authentication: 'Header Auth' });
+
 		workflowPage.getters.nodeCredentialsSelect().click();
 		workflowPage.getters.nodeCredentialsCreateOption().click();
 		credentialsModal.getters.credentialsEditModal().should('be.visible');
@@ -225,29 +168,23 @@ describe('Webhook Trigger node', () => {
 
 		ndv.actions.execute();
 		cy.wait(waitForWebhook);
+
 		cy.request({
 			method: 'GET',
 			url: `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`,
-			headers: {
-				test: 'wrong',
-			},
+			headers: { test: 'wrong' },
 			failOnStatusCode: false,
-		})
-			.then((response) => {
-				expect(response.status).to.eq(403);
-			})
-			.then(() => {
-				cy.request({
-					method: 'GET',
-					url: `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`,
-					headers: {
-						test: 'test',
-					},
-					failOnStatusCode: true,
-				}).then((response) => {
-					expect(response.status).to.eq(200);
-				});
-			});
+		}).then((res) => {
+			expect(res.status).to.eq(403);
+		});
+
+		cy.request({
+			method: 'GET',
+			url: `${BACKEND_BASE_URL}/webhook-test/${webhookPath}`,
+			headers: { test: 'test' },
+		}).then((res) => {
+			expect(res.status).to.eq(200);
+		});
 	});
 });
 
