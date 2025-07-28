@@ -1,51 +1,62 @@
 {
-  "name": "Webhook wait set",
+  "name": "Webhook wait set (flexible)",
+  "active": true,
   "nodes": [
     {
       "parameters": {
-        "path": "23fc3930-b8f9-41d9-89db-b647291a2201",
-        "options": {}
+        "path": "dynamic-webhook",
+        "options": {
+          "responseMode": "onReceived",
+          "responseData": "firstEntryJson",
+          "responseHeaders": [
+            {
+              "name": "X-Custom-Header",
+              "value": "Webhook-Received"
+            }
+          ]
+        }
       },
       "id": "70d84fe7-e221-4978-a15e-3984f2df645f",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [
-        500,
-        580
-      ],
+      "position": [500, 580],
       "webhookId": "23fc3930-b8f9-41d9-89db-b647291a2201"
     },
     {
       "parameters": {
-        "amount": 2,
+        "amount": "={{ $json.waitTime || 2 }}",
         "unit": "seconds"
       },
       "id": "7f15f650-99bc-400b-8db8-67be53003fa3",
       "name": "Wait",
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1,
-      "position": [
-        720,
-        580
-      ],
-      "webhookId": "18a12605-1fbd-49da-854e-268ab6db1ea3"
+      "position": [720, 580]
     },
     {
       "parameters": {
-        "options": {}
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "status",
+              "value": "processed"
+            },
+            {
+              "name": "receivedAt",
+              "value": "={{ $now.toISOString() }}"
+            }
+          ]
+        }
       },
       "id": "5bdafae4-e297-463f-991f-b8ea14983026",
       "name": "Set",
       "type": "n8n-nodes-base.set",
       "typeVersion": 1,
-      "position": [
-        940,
-        580
-      ]
+      "position": [940, 580]
     }
   ],
-  "pinData": {},
   "connections": {
     "Webhook": {
       "main": [
@@ -70,7 +81,6 @@
       ]
     }
   },
-  "active": false,
   "settings": {},
   "versionId": "0c67e557-1faf-446e-881e-3245228c627e",
   "id": "1038",
