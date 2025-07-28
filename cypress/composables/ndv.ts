@@ -1,347 +1,150 @@
 /**
- * Getters
+ * NDV (Node Details View) Composables — Cypress helpers for working with the NDV UI.
  */
 
 import { getVisiblePopper, getVisibleSelect } from '../utils/popper';
 
-export function getNdvContainer() {
-	return cy.getByTestId('ndv');
-}
+/// <reference types="cypress" />
 
-export function getCredentialSelect(eq = 0) {
-	return cy.getByTestId('node-credentials-select').eq(eq);
-}
-
-export function getCreateNewCredentialOption() {
-	return cy.getByTestId('node-credentials-select-item-new');
-}
-
-export function getBackToCanvasButton() {
-	return cy.getByTestId('back-to-canvas');
-}
-
-export function getExecuteNodeButton() {
-	return cy.getByTestId('node-execute-button');
-}
-
-export function getParameterInputByName(name: string) {
-	return cy.getByTestId(`parameter-input-${name}`);
-}
-
-export function getInputPanel() {
-	return cy.getByTestId('ndv-input-panel');
-}
-
-export function getInputSelect() {
-	return cy.getByTestId('ndv-input-select').find('input');
-}
-
-export function getInputLinkRun() {
-	return getInputPanel().findChildByTestId('link-run');
-}
-
-export function getMainPanel() {
-	return cy.getByTestId('node-parameters');
-}
-
-export function getOutputPanel() {
-	return cy.getByTestId('output-panel');
-}
-
-export function getFixedCollection(collectionName: string) {
-	return cy.getByTestId(`fixed-collection-${collectionName}`);
-}
-
-export function getResourceLocator(paramName: string) {
-	return cy.getByTestId(`resource-locator-${paramName}`);
-}
-
-export function getResourceLocatorInput(paramName: string) {
-	return getResourceLocator(paramName).find('[data-test-id="rlc-input-container"]');
-}
-
-export function getInputPanelDataContainer() {
-	return getInputPanel().findChildByTestId('ndv-data-container');
-}
-
-export function getInputTableRows() {
-	return getInputPanelDataContainer().find('table tr');
-}
-
-export function getInputTbodyCell(row: number, col: number) {
-	return getInputTableRows().eq(row).find('td').eq(col);
-}
-
-export function getInputRunSelector() {
-	return cy.get('[data-test-id="ndv-input-panel"] [data-test-id="run-selector"]');
-}
-
-export function getInputPanelItemsCount() {
-	return getInputPanel().getByTestId('ndv-items-count');
-}
-
-export function getOutputPanelDataContainer() {
-	return getOutputPanel().findChildByTestId('ndv-data-container');
-}
-
-export function getOutputTableRows() {
-	return getOutputPanelDataContainer().find('table tr');
-}
-
-export function getOutputTableRow(row: number) {
-	return getOutputTableRows().eq(row);
-}
-
-export function getOutputTableHeaders() {
-	return getOutputPanelDataContainer().find('table thead th');
-}
-
-export function getOutputTableHeaderByText(text: string) {
-	return getOutputTableHeaders().contains(text);
-}
-
-export function getOutputTbodyCell(row: number, col: number) {
-	return getOutputTableRows().eq(row).find('td').eq(col);
-}
-
-export function getOutputRunSelector() {
-	return cy.get('[data-test-id="output-panel"] [data-test-id="run-selector"]');
-}
-
-export function getOutputRunSelectorInput() {
-	return getOutputRunSelector().find('input');
-}
-
-export function getOutputPanelTable() {
-	return getOutputPanelDataContainer().get('table');
-}
-
-export function getRunDataInfoCallout() {
-	return cy.getByTestId('run-data-callout');
-}
-
-export function getOutputPanelItemsCount() {
-	return getOutputPanel().getByTestId('ndv-items-count');
-}
-
-export function getOutputPanelRelatedExecutionLink() {
-	return getOutputPanel().getByTestId('related-execution-link');
-}
-
-export function getNodeOutputHint() {
-	return cy.getByTestId('ndv-output-run-node-hint');
-}
-
-export function getWorkflowCards() {
-	return cy.getByTestId('resources-list-item-workflow');
-}
-
-export function getWorkflowCard(workflowName: string) {
-	return getWorkflowCards()
-		.contains(workflowName)
-		.parents('[data-test-id="resources-list-item-workflow"]');
-}
-
-export function getWorkflowCardContent(workflowName: string) {
-	return getWorkflowCard(workflowName).findChildByTestId('card-content');
-}
-
-export function getNodeRunInfoStale() {
-	return cy.getByTestId('node-run-info-stale');
-}
-
-export function getNodeOutputErrorMessage() {
-	return getOutputPanel().findChildByTestId('node-error-message');
-}
-
-export function getParameterExpressionPreviewValue() {
-	return cy.getByTestId('parameter-expression-preview-value');
-}
-
-/**
- * Actions
+/* ============================================================================
+ * Getters
+ * ============================================================================
  */
 
-export function openCredentialSelect(eq = 0) {
-	getCredentialSelect(eq).click();
-}
+// Containers
+export const getNdvContainer = () => cy.getByTestId('ndv');
+export const getMainPanel = () => cy.getByTestId('node-parameters');
+export const getInputPanel = () => cy.getByTestId('ndv-input-panel');
+export const getOutputPanel = () => cy.getByTestId('output-panel');
 
-export function setCredentialByName(name: string) {
+// Buttons
+export const getExecuteNodeButton = () => cy.getByTestId('node-execute-button');
+export const getBackToCanvasButton = () => cy.getByTestId('back-to-canvas');
+export const getCreateNewCredentialOption = () => cy.getByTestId('node-credentials-select-item-new');
+
+// Credentials
+export const getCredentialSelect = (index = 0) =>
+	cy.getByTestId('node-credentials-select').eq(index);
+
+// Parameters
+export const getParameterInputByName = (name: string) =>
+	cy.getByTestId(`parameter-input-${name}`);
+
+// Resource Locator
+export const getResourceLocator = (param: string) =>
+	cy.getByTestId(`resource-locator-${param}`);
+
+export const getResourceLocatorInput = (param: string) =>
+	getResourceLocator(param).find('[data-test-id="rlc-input-container"]');
+
+// Input Table
+export const getInputPanelDataContainer = () =>
+	getInputPanel().findChildByTestId('ndv-data-container');
+
+export const getInputTableRows = () =>
+	getInputPanelDataContainer().find('table tr');
+
+export const getInputTbodyCell = (row: number, col: number) =>
+	getInputTableRows().eq(row).find('td').eq(col);
+
+// Output Table
+export const getOutputPanelDataContainer = () =>
+	getOutputPanel().findChildByTestId('ndv-data-container');
+
+export const getOutputTableRows = () =>
+	getOutputPanelDataContainer().find('table tr');
+
+export const getOutputTbodyCell = (row: number, col: number) =>
+	getOutputTableRows().eq(row).find('td').eq(col);
+
+export const getOutputTableHeaderByText = (text: string) =>
+	getOutputPanelDataContainer().find('table thead th').contains(text);
+
+// Misc
+export const getRunDataInfoCallout = () => cy.getByTestId('run-data-callout');
+export const getNodeOutputHint = () => cy.getByTestId('ndv-output-run-node-hint');
+export const getNodeOutputErrorMessage = () =>
+	getOutputPanel().findChildByTestId('node-error-message');
+export const getParameterExpressionPreviewValue = () =>
+	cy.getByTestId('parameter-expression-preview-value');
+
+/* ============================================================================
+ * Actions
+ * ============================================================================
+ */
+
+export const openCredentialSelect = (index = 0) =>
+	getCredentialSelect(index).click();
+
+export const setCredentialByName = (name: string) => {
 	openCredentialSelect();
 	getCredentialSelect().contains(name).click();
-}
+};
 
-export function clickCreateNewCredential() {
+export const clickCreateNewCredential = () => {
 	openCredentialSelect();
 	getCreateNewCredentialOption().click({ force: true });
-}
+};
 
-export function clickGetBackToCanvas() {
-	getBackToCanvasButton().click();
-}
-
-export function clickExecuteNode() {
+export const clickExecuteNode = () =>
 	getExecuteNodeButton().click();
-}
 
-export function clickResourceLocatorInput(paramName: string) {
-	getResourceLocatorInput(paramName).click();
-}
+export const clickBackToCanvas = () =>
+	getBackToCanvasButton().click();
 
-export function setParameterInputByName(name: string, value: string) {
+export const clickResourceLocatorInput = (param: string) =>
+	getResourceLocatorInput(param).click();
+
+export const setParameterInputByName = (name: string, value: string) =>
 	getParameterInputByName(name).clear().type(value);
-}
 
-export function checkParameterCheckboxInputByName(name: string) {
+export const checkParameterCheckboxInputByName = (name: string) =>
 	getParameterInputByName(name).find('input[type="checkbox"]').check({ force: true });
-}
 
-export function uncheckParameterCheckboxInputByName(name: string) {
+export const uncheckParameterCheckboxInputByName = (name: string) =>
 	getParameterInputByName(name).find('input[type="checkbox"]').uncheck({ force: true });
-}
 
-export function setParameterSelectByContent(name: string, content: string) {
+export const setParameterSelectByContent = (name: string, content: string) => {
 	getParameterInputByName(name).realClick();
 	getVisibleSelect().find('.option-headline').contains(content).click();
-}
+};
 
-export function changeOutputRunSelector(runName: string) {
-	getOutputRunSelector().click();
-	getVisibleSelect().find('.el-select-dropdown__item').contains(runName).click();
-}
-
-export function addItemToFixedCollection(collectionName: string) {
-	getFixedCollection(collectionName).getByTestId('fixed-collection-add').click();
-}
-
-export function typeIntoFixedCollectionItem(collectionName: string, index: number, value: string) {
-	getFixedCollection(collectionName).within(() =>
-		cy.getByTestId('parameter-input').eq(index).type(value),
-	);
-}
-
-export function selectResourceLocatorAddResourceItem(
-	resourceLocator: string,
-	expectedText: string,
-) {
+export const selectResourceLocatorItem = (resourceLocator: string, index: number, expectedText: string) => {
 	clickResourceLocatorInput(resourceLocator);
+	getVisiblePopper().findChildByTestId('rlc-item').eq(index).find('span')
+		.should('contain.text', expectedText).click();
+};
 
-	// getVisiblePopper().findChildByTestId('rlc-item-add-resource').eq(0).should('exist');
-	getVisiblePopper()
-		.findChildByTestId('rlc-item-add-resource')
-		.eq(0)
-		.find('span')
-		.should('contain.text', expectedText)
-		.click();
-}
-
-export function selectResourceLocatorItem(
-	resourceLocator: string,
-	index: number,
-	expectedText: string,
-) {
+export const selectResourceLocatorAddResourceItem = (resourceLocator: string, expectedText: string) => {
 	clickResourceLocatorInput(resourceLocator);
-
-	getVisiblePopper().findChildByTestId('rlc-item').eq(0).should('exist');
-	getVisiblePopper()
-		.findChildByTestId('rlc-item')
-		.eq(index)
-		.find('span')
-		.should('contain.text', expectedText)
-		.click();
-}
-
-export function clickWorkflowCardContent(workflowName: string) {
-	getWorkflowCardContent(workflowName).click();
-}
-
-export function clickAssignmentCollectionAdd() {
-	cy.getByTestId('assignment-collection-drop-area').click();
-}
-
-export function assertNodeOutputHintExists() {
-	getNodeOutputHint().should('exist');
-}
-
-export function assertNodeOutputErrorMessageExists() {
-	return getNodeOutputErrorMessage().should('exist');
-}
-
-// Note that this only validates the expectedContent is *included* in the output table
-export function assertOutputTableContent(expectedContent: unknown[][]) {
-	for (const [i, row] of expectedContent.entries()) {
-		for (const [j, value] of row.entries()) {
-			// + 1 to skip header
-			getOutputTbodyCell(1 + i, j).should('have.text', value);
-		}
-	}
-}
-
-export function populateMapperFields(fields: ReadonlyArray<[string, string]>) {
-	for (const [name, value] of fields) {
-		getParameterInputByName(name).type(value);
-
-		// Click on a parent to dismiss the pop up which hides the field below.
-		getParameterInputByName(name).parent().parent().parent().parent().click('topLeft');
-	}
-}
+	getVisiblePopper().findChildByTestId('rlc-item-add-resource').eq(0).find('span')
+		.should('contain.text', expectedText).click();
+};
 
 /**
- * Populate multiValue fixedCollections. Only supports fixedCollections for which all fields can be defined via keyboard typing
- *
- * @param items - 2D array of items to populate, i.e. [["myField1", "String"], ["myField2", "Number"]]
- * @param collectionName - name of the fixedCollection to populate
- * @param offset - amount of 'parameter-input's before start, e.g. from a controlling dropdown that makes the fields appear
- * @returns
+ * Assert content inside the output table
  */
-export function populateFixedCollection<T extends readonly string[]>(
-	items: readonly T[],
-	collectionName: string,
-	offset: number = 0,
-) {
-	if (items.length === 0) return;
-	const n = items[0].length;
-	for (const [i, params] of items.entries()) {
-		addItemToFixedCollection(collectionName);
-		for (const [j, param] of params.entries()) {
-			getFixedCollection(collectionName)
-				.getByTestId('parameter-input')
-				.eq(offset + i * n + j)
-				.type(`${param}{downArrow}{enter}`);
+export const assertOutputTableContent = (expected: unknown[][]) => {
+	for (const [rowIdx, row] of expected.entries()) {
+		for (const [colIdx, val] of row.entries()) {
+			getOutputTbodyCell(1 + rowIdx, colIdx).should('have.text', val);
 		}
 	}
-}
+};
 
-export function assertInlineExpressionValid() {
-	cy.getByTestId('inline-expression-editor-input').find('.cm-valid-resolvable').should('exist');
-}
+export const assertNodeOutputHintExists = () =>
+	getNodeOutputHint().should('exist');
 
-export function hoverInputItemByText(text: string) {
-	return getInputPanelDataContainer().contains(text).realHover();
-}
+export const assertNodeOutputErrorMessageExists = () =>
+	getNodeOutputErrorMessage().should('exist');
 
-export function verifyInputHoverState(expectedText: string) {
-	getInputPanelDataContainer()
-		.find('[data-test-id="hovering-item"]')
-		.should('be.visible')
-		.should('have.text', expectedText);
-}
+export const assertInlineExpressionValid = () =>
+	cy.getByTestId('inline-expression-editor-input')
+		.find('.cm-valid-resolvable')
+		.should('exist');
 
-export function verifyOutputHoverState(expectedText: string) {
-	getOutputPanelDataContainer()
-		.find('[data-test-id="hovering-item"]')
-		.should('be.visible')
-		.should('have.text', expectedText);
-}
-
-export function resetHoverState() {
-	getBackToCanvasButton().realHover();
-}
-
-export function setInputDisplayMode(mode: 'Schema' | 'Table' | 'JSON' | 'Binary') {
+export const setInputDisplayMode = (mode: 'Schema' | 'Table' | 'JSON' | 'Binary') =>
 	getInputPanel().findChildByTestId('ndv-run-data-display-mode').contains(mode).click();
-}
 
-export function toggleInputRunLinking() {
-	getInputLinkRun().click();
-}
+export const toggleInputRunLinking = () =>
+	getInputPanel().findChildByTestId('link-run').click();
