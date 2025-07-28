@@ -1,5 +1,5 @@
-// Load type definitions that come with Cypress module
 /// <reference types="cypress" />
+/// <reference types="cypress-real-events" />
 
 import type { FrontendSettings, PushPayload, PushType } from '@n8n/api-types';
 
@@ -7,11 +7,17 @@ Cypress.Keyboard.defaults({
 	keystrokeDelay: 0,
 });
 
+/**
+ * Типизация параметров входа в систему
+ */
 interface SigninPayload {
 	email: string;
 	password: string;
 }
 
+/**
+ * Настройки опций drag-and-drop
+ */
 interface DragAndDropOptions {
 	position: 'top' | 'center' | 'bottom';
 }
@@ -23,38 +29,44 @@ declare global {
 		}
 
 		interface Chainable {
+			// Настройки тестов
 			config(key: keyof SuiteConfigOverrides): boolean;
+
+			// Работа с data-testid
 			getByTestId(
 				selector: string,
 				...args: Array<Partial<Loggable & Timeoutable & Withinable & Shadow> | undefined>
 			): Chainable<JQuery<HTMLElement>>;
+
 			findChildByTestId(childTestId: string): Chainable<JQuery<HTMLElement>>;
-			/**
-			 * Creates a workflow from the given fixture and optionally renames it.
-			 *
-			 * @param fixtureKey
-			 * @param [workflowName] Optional name for the workflow. A random nanoid is used if not given
-			 */
-			createFixtureWorkflow(fixtureKey: string, workflowName?: string): void;
-			/** @deprecated use signinAsOwner, signinAsAdmin or signinAsMember instead */
-			signin(payload: SigninPayload): void;
-			signinAsOwner(): void;
-			signinAsAdmin(): void;
-			/**
-			 * Omitting the index will default to index 0.
-			 */
-			signinAsMember(index?: number): void;
-			signout(): void;
-			overrideSettings(value: Partial<FrontendSettings>): void;
-			enableFeature(feature: string): void;
-			disableFeature(feature: string): void;
-			enableQueueMode(): void;
-			disableQueueMode(): void;
-			changeQuota(feature: string, value: number): void;
-			waitForLoad(waitForIntercepts?: boolean): void;
-			grantBrowserPermissions(...permissions: string[]): void;
+
+			// Создание workflow по фикстуре
+			createFixtureWorkflow(fixtureKey: string, workflowName?: string): Chainable<void>;
+
+			// Аутентификация
+			signin(payload: SigninPayload): Chainable<void>; // deprecated
+			signinAsOwner(): Chainable<void>;
+			signinAsAdmin(): Chainable<void>;
+			signinAsMember(index?: number): Chainable<void>;
+			signout(): Chainable<void>;
+
+			// Настройки и режимы
+			overrideSettings(value: Partial<FrontendSettings>): Chainable<void>;
+			enableFeature(feature: string): Chainable<void>;
+			disableFeature(feature: string): Chainable<void>;
+			enableQueueMode(): Chainable<void>;
+			disableQueueMode(): Chainable<void>;
+			changeQuota(feature: string, value: number): Chainable<void>;
+
+			// Ожидания
+			waitForLoad(waitForIntercepts?: boolean): Chainable<void>;
+
+			// Права и буфер обмена
+			grantBrowserPermissions(...permissions: string[]): Chainable<void>;
 			readClipboard(): Chainable<string>;
-			paste(pastePayload: string): void;
+			paste(pastePayload: string): Chainable<void>;
+
+			// Drag and Drop
 			drag(
 				selector: string | Chainable<JQuery<HTMLElement>>,
 				target: [number, number],
@@ -64,15 +76,30 @@ declare global {
 					realMouse?: boolean;
 					clickToFinish?: boolean;
 					moveTwice?: boolean;
-				},
-			): void;
+				}
+			): Chainable<void>;
+
 			draganddrop(
 				draggableSelector: string,
 				droppableSelector: string,
-				options?: Partial<DragAndDropOptions>,
-			): void;
-			push<Type extends PushType>(type: Type, data: PushPayload<Type>): void;
-			shouldNotHaveConsoleErrors(): void;
+				options?: Partial<DragAndDropOptions>
+			): Chainable<void>;
+
+			// Push/Reset
+			push<Type extends PushType>(type: Type, data: PushPayload<Type>): Chainable<void>;
+			resetDatabase(): Chainable<void>;
+
+			// Проверки
+			shouldNotHaveConsoleErrors(): Chainable<void>;
+
+			// Система
+			setAppDate(targetDate: number | Date): Chainable<void>;
+
+			// Вкладки
+			interceptNewTab(): Chainable<void>;
+			visitInterceptedTab(): Chainable<void>;
+
+			// Расширенное окно
 			window(): Chainable<
 				AUTWindow & {
 					innerWidth: number;
@@ -84,10 +111,6 @@ declare global {
 					};
 				}
 			>;
-			resetDatabase(): void;
-			setAppDate(targetDate: number | Date): void;
-			interceptNewTab(): Chainable<void>;
-			visitInterceptedTab(): Chainable<void>;
 		}
 	}
 }
