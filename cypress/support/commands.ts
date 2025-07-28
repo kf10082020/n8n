@@ -22,20 +22,15 @@ Cypress.Commands.add('setAppDate', (targetDate: number | Date) => {
 	});
 });
 
-Cypress.Commands.add('getByTestId', (selector, ...args) => {
-	return cy.get(`[data-test-id="${selector}"]`, ...args);
-});
+Cypress.Commands.add('getByTestId', (selector, ...args) =>
+	cy.get(`[data-test-id="${selector}"]`, ...args),
+);
 
 Cypress.Commands.add(
 	'createFixtureWorkflow',
 	(fixtureKey: string, workflowName = getUniqueWorkflowName()) => {
 		const workflowPage = new WorkflowPage();
-
-		// We need to force the click because the input is hidden
-		workflowPage.getters
-			.workflowImportInput()
-			.selectFile(`fixtures/${fixtureKey}`, { force: true });
-
+		workflowPage.getters.workflowImportInput().selectFile(`fixtures/${fixtureKey}`, { force: true });
 		cy.waitForLoad(false);
 		workflowPage.actions.setWorkflowName(workflowName);
 		workflowPage.getters.saveButton().should('contain', 'Saved');
@@ -43,17 +38,12 @@ Cypress.Commands.add(
 	},
 );
 
-Cypress.Commands.addQuery('findChildByTestId', function (testId: string) {
-	return (subject: Cypress.Chainable) => subject.find(`[data-test-id="${testId}"]`);
+Cypress.Commands.addQuery('findChildByTestId', (testId: string) => {
+	return (subject: JQuery<HTMLElement>) => subject.find(`[data-test-id="${testId}"]`);
 });
 
 Cypress.Commands.add('waitForLoad', (waitForIntercepts = true) => {
-	// These aliases are set-up before each test in cypress/support/e2e.ts
-	// we can't set them up here because at this point it would be too late
-	// and the requests would already have been made
-	if (waitForIntercepts) {
-		cy.wait(['@loadSettings', '@loadNodeTypes']);
-	}
+	if (waitForIntercepts) cy.wait(['@loadSettings', '@loadNodeTypes']);
 	cy.getByTestId('node-view-loader', { timeout: 20000 }).should('not.exist');
 	cy.get('.el-loading-mask', { timeout: 20000 }).should('not.exist');
 });
@@ -61,16 +51,14 @@ Cypress.Commands.add('waitForLoad', (waitForIntercepts = true) => {
 Cypress.Commands.add('signin', ({ email, password }) => {
 	void Cypress.session.clearAllSavedSessions();
 	cy.session([email, password], () => {
-		return cy
-			.request({
-				method: 'POST',
-				url: `${BACKEND_BASE_URL}/rest/login`,
-				body: { emailOrLdapLoginId: email, password },
-				failOnStatusCode: false,
-			})
-			.then((response) => {
-				Cypress.env('currentUserId', response.body.data.id);
-			});
+		cy.request({
+			method: 'POST',
+			url: `${BACKEND_BASE_URL}/rest/login`,
+			body: { emailOrLdapLoginId: email, password },
+			failOnStatusCode: false,
+		}).then((response) => {
+			Cypress.env('currentUserId', response.body.data.id);
+		});
 	});
 });
 
@@ -105,13 +93,11 @@ const setQuota = (feature: string, value: number) =>
 	});
 
 const setQueueMode = (enabled: boolean) =>
-	cy.request('PATCH', `${BACKEND_BASE_URL}/rest/e2e/queue-mode`, {
-		enabled,
-	});
+	cy.request('PATCH', `${BACKEND_BASE_URL}/rest/e2e/queue-mode`, { enabled });
 
 Cypress.Commands.add('enableFeature', (feature: string) => setFeature(feature, true));
-Cypress.Commands.add('changeQuota', (feature: string, value: number) => setQuota(feature, value));
 Cypress.Commands.add('disableFeature', (feature: string) => setFeature(feature, false));
+Cypress.Commands.add('changeQuota', (feature: string, value: number) => setQuota(feature, value));
 Cypress.Commands.add('enableQueueMode', () => setQueueMode(true));
 Cypress.Commands.add('disableQueueMode', () => setQueueMode(false));
 
@@ -133,97 +119,68 @@ Cypress.Commands.add('readClipboard', () =>
 	cy.window().then((win) => win.navigator.clipboard.readText()),
 );
 
-Cypress.Commands.add('paste', { prevSubject: true }, (selector, pastePayload) => {
-	// https://developer.mozilla.org/en-US/docs/Web/API/Element/paste_event
-	cy.wrap(selector).then(($destination) => {
-		const pasteEvent = Object.assign(new Event('paste', { bubbles: true, cancelable: true }), {
+Cypress.Commands.add('paste', { prevSubject: true }, (selector, pastePayload: string) => {
+	cy.wrap(selector).then(($el) => {
+		const pasteEvent = new Event('paste', { bubbles: true, cancelable: true });
+		Object.assign(pasteEvent, {
 			clipboardData: {
 				getData: () => pastePayload,
 			},
 		});
-		$destination[0].dispatchEvent(pasteEvent);
+		$el[0].dispatchEvent(pasteEvent);
 	});
 });
 
-Cypress.Commands.add('drag', (selector, pos, options) => {
-	const index = options?.index ?? 0;
+Cypress.Commands.add('drag', (selector, pos, options = {}) => {
+	const index = options.index ?? 0;
 	const [xDiff, yDiff] = pos;
-	const element = typeof selector === 'string' ? cy.get(selector).eq(index) : selector;
-	element.should('exist');
+	const getElement = () => (typeof selector === 'string' ? cy.get(selector).eq(index) : selector);
 
-	element.then(([$el]) => {
-		const originalLocation = $el.getBoundingClientRect();
-		const newPosition = {
-			x: options?.abs ? xDiff : originalLocation.right + xDiff,
-			y: options?.abs ? yDiff : originalLocation.top + yDiff,
-		};
-		if (options?.realMouse) {
-			element.realMouseDown();
-			element.realMouseMove(0, 0);
-			element.realMouseMove(newPosition.x, newPosition.y);
-			element.realMouseUp();
+	getElement().should('exist').then(([$el]) => {
+		const rect = $el.getBoundingClientRect();
+		const x = options.abs ? xDiff : rect.right + xDiff;
+		const y = options.abs ? yDiff : rect.top + yDiff;
+
+		if (options.realMouse) {
+			getElement().realMouseDown().realMouseMove(0, 0).realMouseMove(x, y).realMouseUp();
 		} else {
-			element.trigger('mousedown', { force: true });
-			element.trigger('mousemove', {
-				which: 1,
-				pageX: newPosition.x,
-				pageY: newPosition.y,
-				force: true,
-			});
-			if (options?.moveTwice) {
-				// first move like hover to trigger object to be visible
-				// like in main panel in ndv
-				element.trigger('mousemove', {
-					which: 1,
-					pageX: newPosition.x,
-					pageY: newPosition.y,
-					force: true,
-				});
+			getElement()
+				.trigger('mousedown', { force: true })
+				.trigger('mousemove', { which: 1, pageX: x, pageY: y, force: true });
+
+			if (options.moveTwice) {
+				getElement().trigger('mousemove', { which: 1, pageX: x, pageY: y, force: true });
 			}
-			if (options?.clickToFinish) {
-				// Click to finish the drag
-				// For some reason, mouseup isn't working when moving nodes
-				cy.get('body').click(newPosition.x, newPosition.y);
+			if (options.clickToFinish) {
+				cy.get('body').click(x, y);
 			} else {
-				element.trigger('mouseup', { force: true });
+				getElement().trigger('mouseup', { force: true });
 			}
 		}
 	});
 });
 
-Cypress.Commands.add('draganddrop', (draggableSelector, droppableSelector, options) => {
-	if (draggableSelector) {
-		cy.get(draggableSelector).should('exist');
-	}
+Cypress.Commands.add('draganddrop', (draggableSelector, droppableSelector, options = {}) => {
+	if (draggableSelector) cy.get(draggableSelector).should('exist');
 	cy.get(droppableSelector).should('exist');
 
-	cy.get(droppableSelector)
-		.first()
-		.then(([$el]) => {
-			const coords = $el.getBoundingClientRect();
+	cy.get(droppableSelector).first().then(([$el]) => {
+		const rect = $el.getBoundingClientRect();
+		const x = rect.left + rect.width / 2;
+		const y = rect.top + rect.height / 2;
 
-			const pageX = coords.left + coords.width / 2;
-			const pageY = coords.top + coords.height / 2;
-
-			if (draggableSelector) {
-				cy.get(draggableSelector).realMouseDown();
-			}
-			// We don't chain these commands to make sure cy.get is re-trying correctly
-			cy.get(droppableSelector).realMouseMove(0, 0);
-			cy.get(droppableSelector).realMouseMove(pageX, pageY);
-			cy.get(droppableSelector).realHover();
-			cy.get(droppableSelector).realMouseUp({ position: options?.position ?? 'top' });
-			if (draggableSelector) {
-				cy.get(draggableSelector).realMouseUp();
-			}
-		});
+		if (draggableSelector) cy.get(draggableSelector).realMouseDown();
+		cy.get(droppableSelector)
+			.realMouseMove(0, 0)
+			.realMouseMove(x, y)
+			.realHover()
+			.realMouseUp({ position: options.position ?? 'top' });
+		if (draggableSelector) cy.get(draggableSelector).realMouseUp();
+	});
 });
 
-Cypress.Commands.add('push', (type, data) => {
-	cy.request('POST', `${BACKEND_BASE_URL}/rest/e2e/push`, {
-		type,
-		data,
-	});
+Cypress.Commands.add('push', (type: string, data: unknown) => {
+	cy.request('POST', `${BACKEND_BASE_URL}/rest/e2e/push`, { type, data });
 });
 
 Cypress.Commands.add('shouldNotHaveConsoleErrors', () => {
