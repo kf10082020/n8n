@@ -1,13 +1,23 @@
 diff --git a/index.js b/index.js
-index b054bc7cbe742e8948e62dc3fdbaba9080e4aee1..7327ad02b48b3746cba93e0317ed190e61886888 100644
+index b054bc7cbe742e8948e62dc3fdbaba9080e4aee1..1e0f7fc7b71a1e1a63a1f1d05f3d7490b0fc1c10 100644
 --- a/index.js
 +++ b/index.js
-@@ -7,7 +7,7 @@ const { findUp } = require('./findUp');
+@@ -6,8 +6,15 @@ const { findUp } = require('./findUp');
  const found = findUp('.npmrc', __dirname);
  const rootDir = path.dirname(found);
  
 -const localRulesPath = path.resolve(rootDir, 'packages', '@n8n_io', 'eslint-config', 'local-rules.js')
-+const localRulesPath = path.resolve(rootDir, 'packages', '@n8n', 'eslint-config', 'local-rules.js')
- const rules = require(localRulesPath);
+-const rules = require(localRulesPath);
++// ⬇️ Changed @n8n_io → @n8n to match new monorepo structure
++const localRulesPath = path.resolve(rootDir, 'packages', '@n8n', 'eslint-config', 'local-rules.js');
++
++let rules;
++try {
++  rules = require(localRulesPath);
++} catch (e) {
++  console.warn('[eslint-plugin-n8n-local-rules] Failed to load local rules at:', localRulesPath);
++  throw e;
++}
  
  if (!rules) {
+   throw new Error('No rules found in local-rules.js');
