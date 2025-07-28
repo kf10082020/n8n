@@ -6,53 +6,64 @@ import { settings } from './commands';
 
 registerCypressGrep();
 
+/**
+ * Глобальные хуки — выполняются один раз перед всеми тестами
+ */
 before(() => {
 	cy.resetDatabase();
 
+	// Игнорируем ошибку ResizeObserver (часто бывает в Chrome при отсутствии фокуса)
 	Cypress.on('uncaught:exception', (error) => {
 		return !error.message.includes('ResizeObserver');
 	});
 
-	// Mock the clipboard API because in newer versions of cypress the clipboard API is flaky when the window is not focussed.
+	// Мокаем clipboard API (устранение флаки в CI и без фокуса окна)
 	Cypress.on('window:before:load', (win) => {
-		let currentContent: string = '';
+		let currentContent = '';
 		Object.assign(win.navigator.clipboard, {
 			writeText: async (text: string) => {
 				currentContent = text;
-				return await Promise.resolve();
+				return Promise.resolve();
 			},
-			readText: async () => await Promise.resolve(currentContent),
+			readText: async () => Promise.resolve(currentContent),
 		});
 	});
 });
 
+/**
+ * Выполняется перед каждым тестом
+ */
 beforeEach(() => {
+	// Автоматический логин, если не отключён флагом
 	if (!cy.config('disableAutoLogin')) {
 		cy.signinAsOwner();
 	}
 
-	cy.window().then((win): void => {
+	// Устанавливаем параметры локального хранилища
+	cy.window().then((win) => {
 		win.localStorage.setItem('N8N_THEME', 'light');
 		win.localStorage.setItem('N8N_AUTOCOMPLETE_ONBOARDED', 'true');
 		win.localStorage.setItem('N8N_MAPPING_ONBOARDED', 'true');
 	});
 
+	// Настройки приложения с наложением поверх дефолта
 	cy.intercept('GET', '/rest/settings', (req) => {
-		// Disable cache
-		delete req.headers['if-none-match'];
+		delete req.headers['if-none-match']; // отключаем кэш
 		req.on('response', (res) => {
-			const defaultSettings = res.body.data;
-			res.send({ data: merge(cloneDeep(defaultSettings), settings) });
+			const mergedSettings = merge(cloneDeep(res.body.data), settings);
+			res.send({ data: mergedSettings });
 		});
 	}).as('loadSettings');
 
+	// Интерцепт nodeTypes
 	cy.intercept('GET', '/types/nodes.json').as('loadNodeTypes');
 
-	// Always intercept the request to test credentials and return a success
+	// Успешный тест подключения credentials
 	cy.intercept('POST', '/rest/credentials/test', {
 		data: { status: 'success', message: 'Tested successfully' },
 	}).as('credentialTest');
 
+	// Лицензия (мокаем renew)
 	cy.intercept('POST', '/rest/license/renew', {
 		data: {
 			usage: {
@@ -69,7 +80,10 @@ beforeEach(() => {
 		},
 	});
 
+	// Healthcheck
 	cy.intercept({ pathname: '/api/health' }, { status: 'OK' }).as('healthCheck');
+
+	// Версии системы
 	cy.intercept({ pathname: '/api/versions/*' }, [
 		{
 			name: '1.45.1',
