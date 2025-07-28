@@ -1,4 +1,11 @@
 /**
+ * ===========================
+ * Chat Modal – Cypress Helpers
+ * ===========================
+ * Содержит геттеры и действия для работы с модальным окном чата вручную.
+ */
+
+/**
  * Getters
  */
 
@@ -7,15 +14,15 @@ export function getManualChatModal() {
 }
 
 export function getManualChatInput() {
-	return getManualChatModal().get('.chat-inputs textarea');
+	return getManualChatModal().find('.chat-inputs textarea');
 }
 
 export function getManualChatSendButton() {
-	return getManualChatModal().get('.chat-input-send-button');
+	return getManualChatModal().find('.chat-input-send-button');
 }
 
 export function getManualChatMessages() {
-	return getManualChatModal().get('.chat-messages-list .chat-message');
+	return getManualChatModal().find('.chat-messages-list .chat-message');
 }
 
 export function getManualChatModalCloseButton() {
@@ -31,7 +38,9 @@ export function getManualChatDialog() {
  */
 
 export function sendManualChatMessage(message: string) {
-	getManualChatInput().type(message);
+	getManualChatInput()
+		.should('be.visible') // гарантия появления
+		.type(message, { delay: 10 }); // симуляция живого ввода
 	getManualChatSendButton().click();
 }
 
