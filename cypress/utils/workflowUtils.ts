@@ -1,5 +1,12 @@
 import { nanoid } from 'nanoid';
 
-export function getUniqueWorkflowName(workflowNamePrefix?: string) {
-	return workflowNamePrefix ? `${workflowNamePrefix} ${nanoid(12)}` : nanoid(12);
-}
+/**
+ * Генерирует уникальное имя для workflow с опциональным префиксом.
+ *
+ * @param workflowNamePrefix - (необязательно) префикс перед ID
+ * @returns Уникальное имя workflow, пригодное для создания и поиска
+ *
+ * @example
+ * getUniqueWorkflowName();               // "Mv3sBziFUyWq"
+ * getUniqueWorkflowName('Test Flow');    // "Test Flow 7aYzxEfpLd42"
+ */
