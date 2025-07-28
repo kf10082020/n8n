@@ -1,51 +1,32 @@
+/** @see https://prettier.io/docs/en/options.html */
 module.exports = {
-	/**
-	 * https://prettier.io/docs/en/options.html#semicolons
-	 */
+	// Завершать строки точкой с запятой
 	semi: true,
 
-	/**
-	 * https://prettier.io/docs/en/options.html#trailing-commas
-	 */
+	// Добавлять запятые в последнем элементе (массивы, объекты, импорты)
 	trailingComma: 'all',
 
-	/**
-	 * https://prettier.io/docs/en/options.html#bracket-spacing
-	 */
+	// Пробелы между скобками в объектах: { foo: bar }
 	bracketSpacing: true,
 
-	/**
-	 * https://prettier.io/docs/en/options.html#tabs
-	 */
+	// Использовать табуляцию вместо пробелов
 	useTabs: true,
 
-	/**
-	 * https://prettier.io/docs/en/options.html#tab-width
-	 */
+	// Ширина таба (визуальная)
 	tabWidth: 2,
 
-	/**
-	 * https://prettier.io/docs/en/options.html#arrow-function-parentheses
-	 */
+	// Всегда оборачивать аргументы стрелочных функций в скобки
 	arrowParens: 'always',
 
-	/**
-	 * https://prettier.io/docs/en/options.html#quotes
-	 */
+	// Использовать одинарные кавычки вместо двойных
 	singleQuote: true,
 
-	/**
-	 * https://prettier.io/docs/en/options.html#quote-props
-	 */
+	// Кавычки у ключей только если необходимо: { key: 'value', 'invalid-key': 'value' }
 	quoteProps: 'as-needed',
 
-	/**
-	 * https://prettier.io/docs/en/options.html#end-of-line
-	 */
+	// Символ конца строки — LF
 	endOfLine: 'lf',
 
-	/**
-	 * https://prettier.io/docs/en/options.html#print-width
-	 */
+	// Максимальная длина строки
 	printWidth: 100,
 };
