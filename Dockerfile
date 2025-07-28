@@ -1,35 +1,26 @@
-FROM n8nio/n8n:latest
+# Используем стабильный Node.js с поддержкой apt
+FROM node:18-bullseye-slim
 
-USER root
-
-# Устанавливаем зависимости
+# Установка всех зависимостей
 RUN apt-get update && apt-get install -y \
-    ffmpeg \
-    curl \
-    git \
-    build-essential \
-    cmake
+  ffmpeg \
+  curl \
+  git \
+  build-essential \
+  cmake \
+  python3 \
+  && rm -rf /var/lib/apt/lists/*
 
-# Скачиваем whisper.cpp и компилируем
-RUN git clone https://github.com/ggerganov/whisper.cpp.git /whisper && \
-    cd /whisper && \
-    make -j
+# Установка n8n
+RUN npm install -g n8n
 
-# Скачиваем модель
-RUN mkdir -p /data && \
-    curl -L -o /data/ggml-base.en.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
+# Создаём рабочую директорию
+WORKDIR /data
 
-# Добавляем whisper в PATH
-ENV PATH="/whisper:${PATH}"
+# Railway передаёт ENV автоматически, дополнительно ничего не нужно
 
-# Включаем Node.js code execution
-ENV N8N_ENABLE_NODEJS_CODE_EXECUTION=true
-
-# (Опционально) Basic auth
-ENV N8N_BASIC_AUTH_ACTIVE=true
-ENV N8N_BASIC_AUTH_USER=admin
-ENV N8N_BASIC_AUTH_PASSWORD=admin
-
+# Открываем порт n8n
 EXPOSE 5678
 
+# Старт n8n с указанием рабочей папки (используется в volume)
 CMD ["n8n"]
