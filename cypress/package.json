@@ -1,36 +1,62 @@
 {
   "name": "n8n-cypress",
+  "version": "0.0.0",
   "private": true,
+  "description": "End-to-end (E2E) tests for n8n using Cypress",
+
   "scripts": {
+    // 🧪 Типизация
     "typecheck": "tsc --noEmit",
+
+    // 🧱 Установка Cypress binary (особенно для CI)
     "cypress:install": "cypress install",
+
+    // 🚀 Основные сценарии запуска e2e-тестов
     "test:e2e:ui": "scripts/run-e2e.js ui",
     "test:e2e:dev": "scripts/run-e2e.js dev",
     "test:e2e:all": "scripts/run-e2e.js all",
+
+    // 🐞 Режим для отладки нестабильных тестов
     "test:flaky": "scripts/run-e2e.js debugFlaky",
+
+    // 🎨 Форматирование с Biome
     "format": "biome format --write .",
     "format:check": "biome ci .",
+
+    // 🔍 Линтинг
     "lint": "eslint . --quiet",
     "lintfix": "eslint . --fix",
+
+    // 🧬 Быстрый переход в корень монорепозитория для запуска сервера
     "develop": "cd ..; pnpm dev:e2e:server",
     "start": "cd ..; pnpm start"
   },
-  "devDependencies": {
-    "@cypress/grep": "^4.1.0",
-    "@n8n/api-types": "workspace:*",
-    "@types/lodash": "catalog:",
-    "eslint-plugin-cypress": "^3.5.0",
-    "n8n-workflow": "workspace:*"
-  },
+
   "dependencies": {
-    "@ngneat/falso": "^7.3.0",
-    "@sinonjs/fake-timers": "^13.0.2",
+    // 🔧 Cypress и утилиты
     "cypress": "^14.4.0",
     "cypress-otp": "^1.0.3",
     "cypress-real-events": "^1.14.0",
+    "start-server-and-test": "^2.0.10",
+
+    // 🧪 Генераторы и утилиты
+    "@ngneat/falso": "^7.3.0",
+    "@sinonjs/fake-timers": "^13.0.2",
     "flatted": "catalog:",
     "lodash": "catalog:",
-    "nanoid": "catalog:",
-    "start-server-and-test": "^2.0.10"
+    "nanoid": "catalog:"
+  },
+
+  "devDependencies": {
+    // 🔍 Линтер и типы
+    "eslint-plugin-cypress": "^3.5.0",
+    "@types/lodash": "catalog:",
+
+    // 📦 Внутренние пакеты монорепы
+    "@n8n/api-types": "workspace:*",
+    "n8n-workflow": "workspace:*",
+
+    // 🔍 Тест-фильтрация
+    "@cypress/grep": "^4.1.0"
   }
 }
