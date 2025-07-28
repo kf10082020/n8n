@@ -1,51 +1,60 @@
 {
-	"properties": [
-		{
-			"displayName": "Test property",
-			"name": "testProp",
-			"type": "string",
-			"required": true,
-			"noDataExpression": false,
-			"default": "Some default"
-		},
-		{
-			"displayName": "Resource",
-			"name": "resource",
-			"type": "options",
-			"noDataExpression": true,
-			"options": [
-				{
-					"name": "option1",
-					"value": "option1"
-				},
-				{
-					"name": "option2",
-					"value": "option2"
-				},
-				{
-					"name": "option3",
-					"value": "option3"
-				},
-				{
-					"name": "option4",
-					"value": "option4"
-				}
-			],
-			"default": "option2"
-		}
-	],
-	"displayName": "E2E Node",
-	"name": "@e2e/n8n-nodes-e2e",
-	"group": ["transform"],
-	"codex": {
-		"categories": ["Custom Category"]
-	},
-	"version": 1,
-	"description": "Demonstrate rendering of node",
-	"defaults": {
-		"name": "E2E Node "
-	},
-	"inputs": ["main"],
-	"outputs": ["main"],
-	"icon": "fa:network-wired"
+  "name": "@e2e/n8n-nodes-e2e",
+  "displayName": "E2E Node",
+  "description": "Demonstrate rendering of node",
+  "group": ["transform"],
+  "version": 1,
+  "icon": "fa:network-wired",
+  "inputs": ["main"],
+  "outputs": ["main"],
+  "defaults": {
+    "name": "E2E Node"
+  },
+  "codex": {
+    "categories": ["Custom Category"]
+  },
+  "properties": [
+    {
+      "displayName": "Test Property",
+      "name": "testProp",
+      "type": "string",
+      "default": "Some default",
+      "required": true,
+      "noDataExpression": false,
+      "description": "A test string input for demonstration purposes"
+    },
+    {
+      "displayName": "Resource",
+      "name": "resource",
+      "type": "options",
+      "noDataExpression": true,
+      "default": "option2",
+      "options": [
+        {
+          "name": "Option 1",
+          "value": "option1"
+        },
+        {
+          "name": "Option 2",
+          "value": "option2"
+        },
+        {
+          "name": "Option 3",
+          "value": "option3"
+        },
+        {
+          "name": "Option 4",
+          "value": "option4"
+        }
+      ],
+      "description": "Select a resource to act on"
+    },
+    {
+      "displayName": "Enable Logging",
+      "name": "enableLogging",
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to enable verbose logging"
+    }
+  ]
 }
