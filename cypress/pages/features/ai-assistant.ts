@@ -1,61 +1,61 @@
-import { BasePage } from '../base';
-
 /**
- * @deprecated Use functional composables from @composables instead.
- * If a composable doesn't exist for your use case, please create a new one in:
- * cypress/composables
+ * AI Assistant - Functional Cypress Composables
  *
- * This class-based approach is being phased out in favor of more modular functional composables.
- * Each getter and action in this class should be moved to individual composable functions.
+ * Переработано из class-based подхода. Использовать только функции.
+ * Поддерживает feature-флаг, сообщения, кнопки, чат, быстрые ответы и кодовые диффы.
  */
-export class AIAssistant extends BasePage {
-	url = '/workflows/new';
 
-	getters = {
-		askAssistantFloatingButton: () => cy.getByTestId('ask-assistant-floating-button'),
-		askAssistantSidebar: () => cy.getByTestId('ask-assistant-sidebar'),
-		askAssistantSidebarResizer: () =>
-			this.getters.askAssistantSidebar().find('[class^=_resizer][data-dir=left]').first(),
-		askAssistantChat: () => cy.getByTestId('ask-assistant-chat'),
-		placeholderMessage: () => cy.getByTestId('placeholder-message'),
-		closeChatButton: () => cy.getByTestId('close-chat-button'),
-		chatInputWrapper: () => cy.getByTestId('chat-input-wrapper'),
-		chatInput: () => cy.getByTestId('chat-input'),
-		sendMessageButton: () => cy.getByTestId('send-message-button'),
-		chatMessagesAll: () => cy.get('[data-test-id^=chat-message]'),
-		chatMessagesAssistant: () => cy.getByTestId('chat-message-assistant'),
-		chatMessagesUser: () => cy.getByTestId('chat-message-user'),
-		chatMessagesSystem: () => cy.getByTestId('chat-message-system'),
-		quickReplies: () => cy.getByTestId('quick-replies'),
-		quickReplyButtons: () => this.getters.quickReplies().find('button'),
-		newAssistantSessionModal: () => cy.getByTestId('new-assistant-session-modal'),
-		codeDiffs: () => cy.getByTestId('code-diff-suggestion'),
-		applyCodeDiffButtons: () => cy.getByTestId('replace-code-button'),
-		undoReplaceCodeButtons: () => cy.getByTestId('undo-replace-button'),
-		codeReplacedMessage: () => cy.getByTestId('code-replaced-message'),
-		nodeErrorViewAssistantButton: () =>
-			cy.getByTestId('node-error-view-ask-assistant-button').find('button').first(),
-		credentialEditAssistantButton: () => cy.getByTestId('credential-edit-ask-assistant-button'),
-		codeSnippet: () => cy.getByTestId('assistant-code-snippet-content'),
-	};
+/// <reference types="cypress" />
 
-	actions = {
-		enableAssistant: () => {
-			cy.enableFeature('aiAssistant');
-		},
-		disableAssistant: () => {
-			cy.disableFeature('aiAssistant');
-		},
-		sendMessage: (message: string) => {
-			this.getters.chatInput().type(message).type('{enter}');
-		},
-		closeChat: () => {
-			this.getters.closeChatButton().click();
-			this.getters.askAssistantChat().should('not.be.visible');
-		},
-		openChat: () => {
-			this.getters.askAssistantFloatingButton().click();
-			this.getters.askAssistantChat().should('be.visible');
-		},
-	};
-}
+// === Getters ===
+
+export const getAskAssistantFloatingButton = () => cy.getByTestId('ask-assistant-floating-button');
+export const getAskAssistantSidebar = () => cy.getByTestId('ask-assistant-sidebar');
+export const getAskAssistantSidebarResizer = () =>
+	getAskAssistantSidebar().find('[class^=_resizer][data-dir=left]').first();
+
+export const getAskAssistantChat = () => cy.getByTestId('ask-assistant-chat');
+export const getPlaceholderMessage = () => cy.getByTestId('placeholder-message');
+export const getCloseChatButton = () => cy.getByTestId('close-chat-button');
+export const getChatInputWrapper = () => cy.getByTestId('chat-input-wrapper');
+export const getChatInput = () => cy.getByTestId('chat-input');
+export const getSendMessageButton = () => cy.getByTestId('send-message-button');
+
+export const getAllChatMessages = () => cy.get('[data-test-id^=chat-message]');
+export const getAssistantMessages = () => cy.getByTestId('chat-message-assistant');
+export const getUserMessages = () => cy.getByTestId('chat-message-user');
+export const getSystemMessages = () => cy.getByTestId('chat-message-system');
+
+export const getQuickReplies = () => cy.getByTestId('quick-replies');
+export const getQuickReplyButtons = () => getQuickReplies().find('button');
+
+export const getNewSessionModal = () => cy.getByTestId('new-assistant-session-modal');
+export const getCodeDiffs = () => cy.getByTestId('code-diff-suggestion');
+export const getApplyCodeDiffButtons = () => cy.getByTestId('replace-code-button');
+export const getUndoReplaceCodeButtons = () => cy.getByTestId('undo-replace-button');
+export const getCodeReplacedMessage = () => cy.getByTestId('code-replaced-message');
+
+export const getNodeErrorAssistantButton = () =>
+	cy.getByTestId('node-error-view-ask-assistant-button').find('button').first();
+
+export const getCredentialEditAssistantButton = () => cy.getByTestId('credential-edit-ask-assistant-button');
+export const getCodeSnippet = () => cy.getByTestId('assistant-code-snippet-content');
+
+// === Actions ===
+
+export const enableAIAssistant = () => cy.enableFeature('aiAssistant');
+export const disableAIAssistant = () => cy.disableFeature('aiAssistant');
+
+export const openChat = () => {
+	getAskAssistantFloatingButton().click();
+	getAskAssistantChat().should('be.visible');
+};
+
+export const closeChat = () => {
+	getCloseChatButton().click();
+	getAskAssistantChat().should('not.be.visible');
+};
+
+export const sendMessage = (message: string) => {
+	getChatInput().type(message).type('{enter}');
+};
