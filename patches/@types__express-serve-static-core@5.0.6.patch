@@ -1,13 +1,17 @@
 diff --git a/index.d.ts b/index.d.ts
-index fbad2c77669b1effe9d1ca30f518eb5e0058f2e0..6dc02519a6a8dfe1c7dc7d4d600478ba841b172a 100644
+index fbad2c77669b1effe9d1ca30f518eb5e0058f2e0..d1f24b6a8a1b7fd36a59e7baf1b2460d540dfe71 100644
 --- a/index.d.ts
 +++ b/index.d.ts
-@@ -641,7 +641,7 @@ export interface Request<
+@@ -641,7 +641,11 @@ export interface Request<
  
      query: ReqQuery;
  
 -    route: any;
-+    route?: Pick<IRoute, 'path' | 'stack'>;
++    /**
++     * Contains the currently matched route, if any.
++     * This is only available after the route matches (in route handlers, not middleware).
++     * See: https://expressjs.com/en/api.html#req.route
++     */
++    route?: Pick<IRoute, 'path' | 'stack' | 'methods'>;
  
      signedCookies: any;
- 
