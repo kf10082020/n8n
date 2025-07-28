@@ -3,38 +3,41 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# Устанавливаем необходимые пакеты
+# Устанавливаем необходимые зависимости
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     curl \
     git \
     build-essential \
-    cmake
+    cmake \
+    wget
 
-# Клонируем и собираем whisper.cpp
-WORKDIR /opt/whisper
-RUN git clone --recurse-submodules https://github.com/ggerganov/whisper.cpp.git \
- && cd whisper.cpp && make -j
+# Клонируем и компилируем whisper.cpp
+WORKDIR /opt
+RUN git clone https://github.com/ggerganov/whisper.cpp.git && \
+    cd whisper.cpp && make -j && \
+    cp main /usr/local/bin/whisper
 
-# Копируем бинарник whisper в PATH
-RUN cp whisper.cpp/main /usr/local/bin/whisper && chmod +x /usr/local/bin/whisper
+# Проверка
+RUN whisper --help || echo "Whisper установлен"
 
-# Скачиваем модель (можно изменить на другую)
-RUN curl -L -o /data/ggml-base.en.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
+# Скачиваем модель в папку, видимую n8n
+RUN mkdir -p /data && \
+    curl -L -o /data/ggml-base.en.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
 
-# Включаем Node.js-исполнение
+# Включаем Node.js-код
 ENV N8N_ENABLE_NODEJS_CODE_EXECUTION=true
 
-# (опционально) Включаем базовую авторизацию
+# Авторизация
 ENV N8N_BASIC_AUTH_ACTIVE=true
 ENV N8N_BASIC_AUTH_USER=admin
 ENV N8N_BASIC_AUTH_PASSWORD=admin
 
-# Порт по умолчанию
+# Порт
 EXPOSE 5678
 
-# Устанавливаем рабочую директорию
+# Рабочая директория
 WORKDIR /data
 
-# Запуск n8n
+# Запуск
 CMD ["n8n"]
