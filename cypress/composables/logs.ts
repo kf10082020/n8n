@@ -1,91 +1,130 @@
 /**
- * Accessors
+ * Logs Composables — Cypress helpers for interacting with the logs panel,
+ * including input/output tables and execution entries.
  */
 
-export function getOverviewPanel() {
-	return cy.getByTestId('logs-overview');
-}
+/// <reference types="cypress" />
 
-export function getOverviewPanelBody() {
-	return cy.getByTestId('logs-overview-body');
-}
+/* ============================================================================
+ * Panel Accessors
+ * ============================================================================
+ */
 
-export function getOverviewStatus() {
-	return cy.getByTestId('logs-overview-status');
-}
+/** Returns the logs overview panel container */
+export const getOverviewPanel = () => cy.getByTestId('logs-overview');
 
-export function getLogEntries() {
-	return cy.getByTestId('logs-overview-body').find('[role=treeitem]');
-}
+/** Returns the body section of the overview panel */
+export const getOverviewPanelBody = () => cy.getByTestId('logs-overview-body');
 
-export function getSelectedLogEntry() {
-	return cy.getByTestId('logs-overview-body').find('[role=treeitem][aria-selected=true]');
-}
+/** Returns the status section in overview */
+export const getOverviewStatus = () => cy.getByTestId('logs-overview-status');
 
-export function getInputPanel() {
-	return cy.getByTestId('log-details-input');
-}
+/** Gets all log entry elements (tree items) */
+export const getLogEntries = () => getOverviewPanelBody().find('[role=treeitem]');
 
-export function getInputTableRows() {
-	return cy.getByTestId('log-details-input').find('table tr');
-}
+/** Gets the selected log entry (aria-selected=true) */
+export const getSelectedLogEntry = () =>
+	getOverviewPanelBody().find('[role=treeitem][aria-selected=true]');
 
-export function getInputTbodyCell(row: number, col: number) {
-	return cy.getByTestId('log-details-input').find('table tr').eq(row).find('td').eq(col);
-}
+/** Returns the input panel container */
+export const getInputPanel = () => cy.getByTestId('log-details-input');
 
-export function getNodeErrorMessageHeader() {
-	return cy.getByTestId('log-details-output').findChildByTestId('node-error-message');
-}
+/** Returns the output panel container */
+export const getOutputPanel = () => cy.getByTestId('log-details-output');
 
-export function getOutputPanel() {
-	return cy.getByTestId('log-details-output');
-}
+/** Returns the error message element inside the output panel */
+export const getNodeErrorMessageHeader = () =>
+	getOutputPanel().findChildByTestId('node-error-message');
 
-export function getOutputTableRows() {
-	return cy.getByTestId('log-details-output').find('table tr');
-}
+/* ============================================================================
+ * Input Table Accessors
+ * ============================================================================
+ */
 
-export function getOutputTbodyCell(row: number, col: number) {
-	return cy.getByTestId('log-details-output').find('table tr').eq(row).find('td').eq(col);
-}
+/** Gets all input table rows */
+export const getInputTableRows = () => getInputPanel().find('table tr');
 
 /**
- * Actions
+ * Gets a specific input cell by row and column index
+ * @param row - Zero-based row index
+ * @param col - Zero-based column index
+ */
+export const getInputTbodyCell = (row: number, col: number) =>
+	getInputTableRows().eq(row).find('td').eq(col);
+
+/* ============================================================================
+ * Output Table Accessors
+ * ============================================================================
  */
 
-export function openLogsPanel() {
-	cy.getByTestId('logs-overview-header').click();
-}
+/** Gets all output table rows */
+export const getOutputTableRows = () => getOutputPanel().find('table tr');
 
-export function pressClearExecutionButton() {
+/**
+ * Gets a specific output cell by row and column index
+ * @param row - Zero-based row index
+ * @param col - Zero-based column index
+ */
+export const getOutputTbodyCell = (row: number, col: number) =>
+	getOutputTableRows().eq(row).find('td').eq(col);
+
+/* ============================================================================
+ * Actions
+ * ============================================================================
+ */
+
+/** Opens the logs panel from the header */
+export const openLogsPanel = () => cy.getByTestId('logs-overview-header').click();
+
+/** Clicks the "Clear execution" button in the logs panel */
+export const pressClearExecutionButton = () =>
 	cy.getByTestId('logs-overview-header').find('button').contains('Clear execution').click();
-}
 
-export function clickLogEntryAtRow(rowIndex: number) {
+/**
+ * Clicks a log entry at the given row index
+ * @param rowIndex - Zero-based index
+ */
+export const clickLogEntryAtRow = (rowIndex: number) =>
 	getLogEntries().eq(rowIndex).click();
-}
 
-export function toggleInputPanel() {
+/** Toggles the input panel open or closed */
+export const toggleInputPanel = () =>
 	cy.getByTestId('log-details-header').contains('Input').click();
-}
 
-export function clickOpenNdvAtRow(rowIndex: number) {
-	getLogEntries().eq(rowIndex).realHover();
-	getLogEntries().eq(rowIndex).find('[aria-label="Open..."]').click();
-}
+/**
+ * Opens NDV (Node Details View) from the given log entry
+ * @param rowIndex - Zero-based row index
+ */
+export const clickOpenNdvAtRow = (rowIndex: number) => {
+	const row = getLogEntries().eq(rowIndex);
+	row.realHover();
+	row.find('[aria-label="Open..."]').click();
+};
 
-export function clickTriggerPartialExecutionAtRow(rowIndex: number) {
-	getLogEntries().eq(rowIndex).realHover();
-	getLogEntries().eq(rowIndex).find('[aria-label="Execute step"]').click();
-}
+/**
+ * Triggers partial execution from the given log entry
+ * @param rowIndex - Zero-based row index
+ */
+export const clickTriggerPartialExecutionAtRow = (rowIndex: number) => {
+	const row = getLogEntries().eq(rowIndex);
+	row.realHover();
+	row.find('[aria-label="Execute step"]').click();
+};
 
-export function setInputDisplayMode(mode: 'table' | 'ai' | 'json' | 'schema') {
-	cy.getByTestId('log-details-input').realHover();
-	cy.getByTestId('log-details-input').findChildByTestId(`radio-button-${mode}`).click();
-}
+/**
+ * Sets the display mode in the input panel
+ * @param mode - One of 'table', 'ai', 'json', 'schema'
+ */
+export const setInputDisplayMode = (mode: 'table' | 'ai' | 'json' | 'schema') => {
+	getInputPanel().realHover();
+	getInputPanel().findChildByTestId(`radio-button-${mode}`).click();
+};
 
-export function setOutputDisplayMode(mode: 'table' | 'ai' | 'json' | 'schema') {
-	cy.getByTestId('log-details-output').realHover();
-	cy.getByTestId('log-details-output').findChildByTestId(`radio-button-${mode}`).click();
-}
+/**
+ * Sets the display mode in the output panel
+ * @param mode - One of 'table', 'ai', 'json', 'schema'
+ */
+export const setOutputDisplayMode = (mode: 'table' | 'ai' | 'json' | 'schema') => {
+	getOutputPanel().realHover();
+	getOutputPanel().findChildByTestId(`radio-button-${mode}`).click();
+};
