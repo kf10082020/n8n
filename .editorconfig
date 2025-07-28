@@ -1,20 +1,29 @@
+# Указывает, что это корневой .editorconfig-файл
 root = true
 
+# Общие настройки для всех файлов
 [*]
-charset = utf-8
-indent_style = tab
-indent_size = 2
-end_of_line = lf
-insert_final_newline = true
-trim_trailing_whitespace = true
+charset = utf-8                  # Кодировка файлов
+end_of_line = lf                # Символ конца строки — Line Feed
+insert_final_newline = true     # Вставлять пустую строку в конце файла
+trim_trailing_whitespace = true # Удалять пробелы в конце строк
+indent_style = tab              # Отступ — табуляция
+indent_size = 2                 # Размер табуляции (если редактор поддерживает отображение)
 
+# Специальные настройки для package.json
 [package.json]
 indent_style = space
 indent_size = 2
 
+# Специальные настройки для YAML файлов
 [*.yml]
 indent_style = space
 indent_size = 2
 
+# Специальные настройки для TypeScript файлов
 [*.ts]
-quote_type = single
+indent_style = tab
+indent_size = 2
+# Примечание: quote_type не является стандартным параметром .editorconfig.
+# Для кавычек используйте настройку в eslint/prettier
+# Например: 'quotes': ['error', 'single']
