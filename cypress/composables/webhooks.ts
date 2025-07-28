@@ -1,3 +1,7 @@
+/**
+ * Webhooks Utilities
+ */
+
 import { BACKEND_BASE_URL } from '../constants';
 import { NDV, WorkflowPage } from '../pages';
 import { getVisibleSelect } from '../utils';
@@ -33,9 +37,9 @@ export const simpleWebhookCall = (options: SimpleWebhookCallOptions) => {
 
 	cy.getByTestId('parameter-input-httpMethod').click();
 	getVisibleSelect().find('.option-headline').contains(method).click();
+
 	cy.getByTestId('parameter-input-path')
-		.find('.parameter-input')
-		.find('input')
+		.find('.parameter-input input')
 		.clear()
 		.type(webhookPath);
 
@@ -47,7 +51,9 @@ export const simpleWebhookCall = (options: SimpleWebhookCallOptions) => {
 	if (responseCode) {
 		cy.get('.param-options').click();
 		getVisibleSelect().contains('Response Code').click();
-		cy.get('.parameter-item-wrapper > .parameter-input-list-wrapper').children().click();
+		cy.get('.parameter-item-wrapper > .parameter-input-list-wrapper')
+			.children()
+			.click();
 		getVisibleSelect().contains('201').click();
 	}
 
