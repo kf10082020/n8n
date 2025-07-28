@@ -12,7 +12,7 @@ const INVALID_NAMES = [
 	'<script>alert("Hello")</script>',
 ];
 
-const VALID_NAMES = [
+const VALID_NAMES: [string, string][] = [
 	['a', 'a'],
 	['alice', 'alice'],
 	['Robert', 'Downey Jr.'],
@@ -24,25 +24,37 @@ const VALID_NAMES = [
 	['Милорад', 'Филиповић'],
 ];
 
-describe('Personal Settings', () => {
-	it('should allow to change first and last name', () => {
+describe('👤 Personal Settings', () => {
+	beforeEach(() => {
 		cy.visit('/settings/personal');
-		VALID_NAMES.forEach((name) => {
-			cy.getByTestId('personal-data-form').find('input[name="firstName"]').clear().type(name[0]);
-			cy.getByTestId('personal-data-form').find('input[name="lastName"]').clear().type(name[1]);
+	});
+
+	it('should allow valid names to be saved successfully', () => {
+		VALID_NAMES.forEach(([firstName, lastName]) => {
+			cy.log(`✏️ Typing: ${firstName} ${lastName}`);
+			cy.getByTestId('personal-data-form').within(() => {
+				cy.get('input[name="firstName"]').clear().type(firstName);
+				cy.get('input[name="lastName"]').clear().type(lastName);
+			});
+
 			cy.getByTestId('save-settings-button').click();
-			successToast().should('contain', 'Personal details updated');
+
+			successToast().should('contain.text', 'Personal details updated');
 			successToast().find('.el-notification__closeBtn').click();
 		});
 	});
-	// eslint-disable-next-line n8n-local-rules/no-skipped-tests
-	it('not allow malicious values for personal data', () => {
-		cy.visit('/settings/personal');
-		INVALID_NAMES.forEach((name) => {
-			cy.getByTestId('personal-data-form').find('input[name="firstName"]').clear().type(name);
-			cy.getByTestId('personal-data-form').find('input[name="lastName"]').clear().type(name);
+
+	it('should reject malicious values and show an error toast', () => {
+		INVALID_NAMES.forEach((value) => {
+			cy.log(`🛑 Trying invalid input: ${value}`);
+			cy.getByTestId('personal-data-form').within(() => {
+				cy.get('input[name="firstName"]').clear().type(value);
+				cy.get('input[name="lastName"]').clear().type(value);
+			});
+
 			cy.getByTestId('save-settings-button').click();
-			errorToast().should('contain', 'Potentially malicious string');
+
+			errorToast().should('contain.text', 'Potentially malicious string');
 			errorToast().find('.el-notification__closeBtn').click();
 		});
 	});
