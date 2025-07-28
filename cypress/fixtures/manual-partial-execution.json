@@ -11,10 +11,7 @@
       "name": "Edit Fields",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.3,
-      "position": [
-        1140,
-        260
-      ]
+      "position": [1140, 260]
     },
     {
       "parameters": {
@@ -25,10 +22,7 @@
       "name": "Webhook1",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [
-        680,
-        340
-      ],
+      "position": [680, 340],
       "webhookId": "30ff316d-405f-4288-a0ac-e713546c9d4e"
     },
     {
@@ -40,10 +34,7 @@
       "name": "Hacker News",
       "type": "n8n-nodes-base.hackerNews",
       "typeVersion": 1,
-      "position": [
-        920,
-        260
-      ]
+      "position": [920, 260]
     },
     {
       "parameters": {
@@ -54,10 +45,7 @@
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [
-        680,
-        180
-      ],
+      "position": [680, 180],
       "webhookId": "4a3398e4-1388-4e10-9d21-add90b804955"
     }
   ],
