@@ -5,6 +5,11 @@ USER root
 # Установка зависимостей
 RUN apt-get update && apt-get install -y ffmpeg curl git build-essential cmake wget
 
+# whisper.cpp + ffmpeg + deps
+RUN apt-get update && apt-get install -y ffmpeg curl git build-essential cmake wget && \
+    git clone https://github.com/ggerganov/whisper.cpp.git /opt/whisper.cpp && \
+    cd /opt/whisper.cpp && make -j && cp main /usr/local/bin/whisper
+
 # Сборка whisper.cpp
 WORKDIR /opt
 RUN git clone https://github.com/ggerganov/whisper.cpp.git && \
