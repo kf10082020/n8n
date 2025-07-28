@@ -1,14 +1,27 @@
 diff --git a/index.d.ts b/index.d.ts
-index 6d08adc155873e948d2ffebf40622fe405159bc0..b90773f2777a68408d9d1536412f80bb3c5325a0 100644
+index 6d08adc155873e948d2ffebf40622fe405159bc0..d3c9a9f3941d2dfb7f0e357d346d6a5f0f870b45 100644
 --- a/index.d.ts
 +++ b/index.d.ts
-@@ -62,6 +62,9 @@ declare class WebSocket extends EventEmitter {
+@@ -1,5 +1,6 @@
+ import { EventEmitter } from 'events';
+ import { Duplex } from 'stream';
++import * as http from 'http';
+
+ export type Data =
+     | string
+     | Buffer
+@@ -62,6 +63,13 @@ declare class WebSocket extends EventEmitter {
+         | typeof WebSocket.CLOSING
          | typeof WebSocket.CLOSED;
      readonly url: string;
- 
-+    /** Indicates if the connection has replied to the last PING */
-+    isAlive: boolean;
 +
++    /**
++     * Indicates if the connection has responded to the last ping.
++     * Typically used in heartbeat/keep-alive implementations.
++     * This is not part of the official ws typings but is widely used in production apps.
++     */
++    isAlive: boolean;
+ 
      /** The connection is not yet open. */
      readonly CONNECTING: 0;
      /** The connection is open and ready to communicate. */
