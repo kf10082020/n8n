@@ -1,1 +1,45 @@
+# Приводим все shell-скрипты к LF — для кроссплатформенности
 *.sh text eol=lf
+
+# Приводим все конфигурационные файлы к LF
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.ini text eol=lf
+*.conf text eol=lf
+*.env text eol=lf
+
+# Приводим скрипты и исходники к LF
+*.ts text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.tsx text eol=lf
+*.py text eol=lf
+*.rb text eol=lf
+*.go text eol=lf
+*.java text eol=lf
+*.c text eol=lf
+*.cpp text eol=lf
+*.cs text eol=lf
+
+# Markdown и документация
+*.md text eol=lf
+*.txt text eol=lf
+
+# Bash/Zsh/Unix-файлы
+*.bash text eol=lf
+*.zsh text eol=lf
+
+# Примеры принудительного бинарного режима (не конвертировать EOL)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.gz binary
+
+# Принудительная нормализация всех текстовых файлов (на случай ошибок)
+* text=auto
