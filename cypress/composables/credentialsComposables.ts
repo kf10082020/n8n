@@ -1,6 +1,12 @@
-export function getCredentialsPageUrl() {
-	return '/home/credentials';
-}
+/**
+ * Credentials Composables
+ */
+
+//////////////////////////////
+// URL & Navigation
+//////////////////////////////
+
+export const getCredentialsPageUrl = () => '/home/credentials';
 
 export const verifyCredentialsListPageIsLoaded = () => {
 	cy.get('[data-test-id="resources-list-wrapper"], [data-test-id="empty-resources-list"]').should(
@@ -8,95 +14,82 @@ export const verifyCredentialsListPageIsLoaded = () => {
 	);
 };
 
-export const loadCredentialsPage = (credentialsPageUrl: string) => {
-	cy.visit(credentialsPageUrl);
+export const loadCredentialsPage = (url: string) => {
+	cy.visit(url);
 	verifyCredentialsListPageIsLoaded();
 };
 
-/**
- * Getters - Page
- */
+//////////////////////////////
+// Page Getters
+//////////////////////////////
 
-export function getEmptyListCreateCredentialButton() {
-	return cy.getByTestId('empty-resources-list').find('button');
-}
+export const getEmptyListCreateCredentialButton = () =>
+	cy.getByTestId('empty-resources-list').find('button');
 
-export function getCredentialCards() {
-	return cy.getByTestId('resources-list-item');
-}
+export const getCredentialCards = () => cy.getByTestId('resources-list-item');
 
-/**
- * Getters - Modal
- */
+//////////////////////////////
+// Modal Getters
+//////////////////////////////
 
-export function getNewCredentialModal() {
-	return cy.getByTestId('selectCredential-modal', { timeout: 5000 });
-}
+export const getNewCredentialModal = () =>
+	cy.getByTestId('selectCredential-modal', { timeout: 5000 });
 
-export function getEditCredentialModal() {
-	return cy.getByTestId('editCredential-modal', { timeout: 5000 });
-}
+export const getEditCredentialModal = () =>
+	cy.getByTestId('editCredential-modal', { timeout: 5000 });
 
-export function getNewCredentialTypeSelect() {
-	return cy.getByTestId('new-credential-type-select');
-}
+export const getNewCredentialTypeSelect = () => cy.getByTestId('new-credential-type-select');
 
-export function getNewCredentialTypeOption(credentialType: string) {
-	return cy.getByTestId('new-credential-type-select-option').contains(credentialType);
-}
+export const getNewCredentialTypeOption = (type: string) =>
+	cy.getByTestId('new-credential-type-select-option').contains(type);
 
-export function getNewCredentialTypeButton() {
-	return cy.getByTestId('new-credential-type-button');
-}
+export const getNewCredentialTypeButton = () => cy.getByTestId('new-credential-type-button');
 
-export function getCredentialConnectionParameterInputs() {
-	return cy.getByTestId('credential-connection-parameter');
-}
+export const getCredentialConnectionParameterInputs = () =>
+	cy.getByTestId('credential-connection-parameter');
 
-export function getConnectionParameter(fieldName: string) {
-	return getCredentialConnectionParameterInputs().find(
-		`:contains('${fieldName}') .n8n-input input`,
-	);
-}
+export const getConnectionParameter = (field: string) =>
+	getCredentialConnectionParameterInputs().find(`:contains('${field}') .n8n-input input`);
 
-export function getCredentialSaveButton() {
-	return cy.getByTestId('credential-save-button', { timeout: 5000 });
-}
+export const getCredentialSaveButton = () =>
+	cy.getByTestId('credential-save-button', { timeout: 5000 });
 
-/**
- * Actions - Modal
- */
+//////////////////////////////
+// Modal Actions
+//////////////////////////////
 
-export function setCredentialName(name: string) {
+export const setCredentialName = (name: string) => {
 	cy.getByTestId('credential-name').find('span[data-test-id=inline-edit-preview]').click();
 	cy.getByTestId('credential-name').type(name);
-}
-export function saveCredential() {
+};
+
+export const saveCredential = () => {
 	getCredentialSaveButton()
 		.click({ force: true })
 		.within(() => {
 			cy.get('button').should('not.exist');
 		});
 	getCredentialSaveButton().should('have.text', 'Saved');
-}
-export function saveCredentialWithWait() {
+};
+
+export const saveCredentialWithWait = () => {
 	cy.intercept('POST', '/rest/credentials').as('saveCredential');
 	saveCredential();
 	cy.wait('@saveCredential');
 	getCredentialSaveButton().should('contain.text', 'Saved');
-}
+};
 
-export function closeNewCredentialModal() {
+export const closeNewCredentialModal = () => {
 	getNewCredentialModal().find('.el-dialog__close').first().click();
-}
+};
 
-export function createNewCredential(
+export const createNewCredential = (
 	type: string,
 	name: string,
 	parameter: string,
-	parameterValue: string,
+	value: string,
 	closeModal = true,
-) {
+) => {
 	getEmptyListCreateCredentialButton().click();
 
 	getNewCredentialModal().should('be.visible');
@@ -104,11 +97,12 @@ export function createNewCredential(
 	getNewCredentialTypeOption(type).click();
 
 	getNewCredentialTypeButton().click();
-	getConnectionParameter(parameter).type(parameterValue);
+	getConnectionParameter(parameter).type(value);
 
 	setCredentialName(name);
 	saveCredential();
+
 	if (closeModal) {
 		getEditCredentialModal().find('.el-dialog__close').first().click();
 	}
-}
+};
