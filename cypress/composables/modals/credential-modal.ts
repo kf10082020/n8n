@@ -1,8 +1,15 @@
+import { clearNotifications } from '../../pages/notifications';
+
+/**
+ * ==============================
+ * Credential Modal – Cypress API
+ * ==============================
+ * Работа с модальным окном редактирования учётных данных
+ */
+
 /**
  * Getters
  */
-
-import { clearNotifications } from '../../pages/notifications';
 
 export function getCredentialConnectionParameterInputs() {
 	return cy.getByTestId('credential-connection-parameter');
@@ -32,23 +39,40 @@ export function getCredentialModalCloseButton() {
  * Actions
  */
 
+/**
+ * Устанавливает значение параметра по имени.
+ */
 export function setCredentialConnectionParameterInputByName(name: string, value: string) {
-	getCredentialConnectionParameterInputByName(name).type(value);
+	getCredentialConnectionParameterInputByName(name)
+		.should('be.visible')
+		.clear()
+		.type(value);
 }
 
+/**
+ * Сохраняет учётные данные.
+ */
 export function saveCredential() {
 	getCredentialSaveButton()
-		.click({ force: true })
-		.within(() => {
-			cy.get('button').should('not.exist');
-		});
-	getCredentialSaveButton().should('have.text', 'Saved');
+		.should('be.visible')
+		.click({ force: true });
+
+	getCredentialSaveButton()
+		.should('contain.text', 'Saved');
 }
 
+/**
+ * Закрывает модальное окно.
+ */
 export function closeCredentialModal() {
-	getCredentialModalCloseButton().click();
+	getCredentialModalCloseButton()
+		.should('be.visible')
+		.click();
 }
 
+/**
+ * Устанавливает несколько значений параметров и сохраняет (если нужно).
+ */
 export function setCredentialValues(values: Record<string, string>, save = true) {
 	Object.entries(values).forEach(([key, value]) => {
 		setCredentialConnectionParameterInputByName(key, value);
