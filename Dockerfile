@@ -1,27 +1,21 @@
-# ✅ Используем официальный стабильный образ Node.js с Debian slim
-FROM node:18-bullseye-slim
+FROM debian:bullseye-slim
 
-# 🧾 Обновляем и устанавливаем зависимости в одном слое
+# Установим зависимости
 RUN apt-get update && \
   apt-get install -y --no-install-recommends \
-    ffmpeg \
-    curl \
-    git \
-    build-essential \
-    cmake \
-    python3 \
+    build-essential cmake git curl ffmpeg python3 \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 📦 Установка n8n глобально
-RUN npm install -g n8n
+# Клонируем Whisper.cpp
+WORKDIR /app
+RUN git clone https://github.com/ggerganov/whisper.cpp.git
+WORKDIR /app/whisper.cpp
 
-# 📂 Создаём и переходим в рабочую директорию
-WORKDIR /data
+# Собираем
+RUN cmake -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build -j
 
-# 🐳 Открываем порт, на котором работает n8n
-EXPOSE 5678
+# Копируем модель
+COPY ggml-base.en.bin /app/ggml-base.en.bin
 
-# ❌ Удалено: VOLUME ["/data"]
-
-# 🚀 Команда по умолчанию
-CMD ["n8n"]
+# Точка входа
+ENTRYPOINT ["/app/whisper.cpp/build/bin/main"]
