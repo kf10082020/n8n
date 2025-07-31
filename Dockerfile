@@ -1,16 +1,14 @@
-# ✅ Используем стабильный официальный образ n8n
 FROM n8nio/n8n:1.45.0
 
-# ✅ Устанавливаем переменную окружения для прав
+# Установка переменных
 ENV N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
 
-# ❌ Не используем VOLUME — Railway сам монтирует volume
+# Установка кастомных нод
+RUN npm install -g @tavily/n8n-nodes-tavily \
+    && npm install -g n8n-nodes-base
 
-# ✅ Порт по умолчанию
+# Порт
 EXPOSE 5678
 
-# Установка кастомных нод
-RUN npm install -g @tavily/n8n-nodes-tavily
-
-# ✅ Явно указываем команду запуска
+# Запуск n8n
 CMD ["n8n"]
