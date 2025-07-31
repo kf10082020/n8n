@@ -1,13 +1,10 @@
-FROM n8nio/n8n:1.44.0
+# ✅ Используем стабильный образ n8n
+FROM n8nio/n8n:1.45.0
 
-WORKDIR /data
+# ✅ Устанавливаем переменную окружения для прав
+ENV N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+
+# ✅ Не используем VOLUME — Railway сам монтирует volume
+
+# ✅ Порт по умолчанию
 EXPOSE 5678
-
-ENV N8N_BASIC_AUTH_ACTIVE=true
-ENV N8N_BASIC_AUTH_USER=admin
-ENV N8N_BASIC_AUTH_PASSWORD=yourpassword
-ENV N8N_HOST=0.0.0.0
-ENV N8N_PORT=5678
-ENV N8N_PROTOCOL=http
-
-CMD ["n8n"]
