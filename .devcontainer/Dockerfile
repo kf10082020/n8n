@@ -1,25 +1,22 @@
-FROM n8nio/base:22
+# ✅ 1. Используем официальный образ, где уже есть команда `n8n`
+FROM n8nio/n8n:1.45.0
 
-# Устанавливаем необходимые утилиты
-RUN apk add --no-cache --update \
-    openssh \
-    sudo \
-    shadow \
-    bash \
-    curl \
-    git
+# ✅ 2. Временно включаем root, чтобы установить кастомные ноды в /data
+USER root
 
-# Даём пользователю node права на sudo без пароля
-RUN echo "node ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/node && \
-    chmod 0440 /etc/sudoers.d/node
+# ✅ 3. Устанавливаем кастомные ноды ЛОКАЛЬНО (не глобально!)
+RUN npm install --prefix /data \
+    @tavily/n8n-nodes-tavily \
+    n8n-nodes-base
 
-# Создаём и настраиваем рабочую директорию
-RUN mkdir -p /workspaces && chown node:node /workspaces
-
-# Переключаемся на пользователя node
+# ✅ 4. Возвращаем безопасного пользователя node
 USER node
 
-# Подготавливаем глобальное хранилище pnpm
-RUN mkdir -p ~/.pnpm-store && \
-    corepack enable && \
-    pnpm config set store-dir ~/.pnpm-store --global
+# ✅ 5. Настраиваем переменные
+ENV N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+
+# ✅ 6. Порт для Railway (внутренний, внешний всегда 443)
+EXPOSE 5678
+
+# ✅ 7. Явная команда запуска (важно!)
+CMD ["n8n"]
