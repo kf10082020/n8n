@@ -1,7 +1,6 @@
 FROM n8nio/n8n:1.44.0
 
 WORKDIR /data
-VOLUME ["/data"]
 EXPOSE 5678
 
 ENV N8N_BASIC_AUTH_ACTIVE=true
