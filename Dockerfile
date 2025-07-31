@@ -9,5 +9,8 @@ ENV N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
 # ✅ Порт по умолчанию
 EXPOSE 5678
 
+# Установка кастомных нод
+RUN npm install -g @tavily/n8n-nodes-tavily
+
 # ✅ Явно указываем команду запуска
 CMD ["n8n"]
