@@ -1,12 +1,17 @@
 FROM n8nio/n8n:1.45.0
 
-# Установка кастомной ноды ЛОКАЛЬНО, а не глобально
+# Переключаемся на root, чтобы можно было писать в /data
 USER root
-RUN npm install --prefix /data @tavily/n8n-nodes-tavily
 
-# Назначаем рабочую директорию и права обратно node-пользователю
+# Устанавливаем кастомные ноды ЛОКАЛЬНО в /data
+RUN npm install --prefix /data \
+    @tavily/n8n-nodes-tavily \
+    n8n-nodes-base
+
+# Возвращаем пользователя node
 USER node
 
+# Переменная для прав доступа к настройкам
 ENV N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
 
 EXPOSE 5678
