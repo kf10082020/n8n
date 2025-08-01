@@ -1,22 +1,25 @@
-# ✅ 1. Используем официальный образ, где уже есть команда `n8n`
-FROM n8nio/n8n:1.45.0
+FROM node:18-bullseye-slim
 
-# ✅ 2. Временно включаем root, чтобы установить кастомные ноды в /data
-USER root
+# Устанавливаем зависимости
+RUN apt-get update && \
+    apt-get install -y python3 ffmpeg build-essential && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# ✅ 3. Устанавливаем кастомные ноды ЛОКАЛЬНО (не глобально!)
-RUN npm install --prefix /data \
-    @tavily/n8n-nodes-tavily \
-    n8n-nodes-base
+# Устанавливаем n8n глобально
+RUN npm install -g n8n
 
-# ✅ 4. Возвращаем безопасного пользователя node
-USER node
+# Создаем рабочую директорию
+WORKDIR /data
 
-# ✅ 5. Настраиваем переменные
-ENV N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
-
-# ✅ 6. Порт для Railway (внутренний, внешний всегда 443)
+# Открываем порт
 EXPOSE 5678
 
-# ✅ 7. Явная команда запуска (важно!)
+# Устанавливаем переменные окружения
+ENV N8N_BASIC_AUTH_ACTIVE=true \
+    N8N_BASIC_AUTH_USER=admin \
+    N8N_BASIC_AUTH_PASSWORD=admin \
+    N8N_PORT=5678 \
+    N8N_HOST=0.0.0.0
+
+# Команда запуска
 CMD ["n8n"]
