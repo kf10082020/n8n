@@ -7,13 +7,13 @@ ENV N8N_PORT=${PORT} \
     N8N_BASIC_AUTH_USER=admin \
     N8N_BASIC_AUTH_PASSWORD=admin
 
-# Создаём папку конфигурации (иначе Railway volume не сможет смонтировать)
+# Создаём папку конфигурации, иначе Railway volume упадёт
 RUN mkdir -p /home/node/.n8n
 
-# Устанавливаем рабочую директорию (важно!)
+# Устанавливаем рабочую директорию
 WORKDIR /home/node
 
 EXPOSE 5678
 
-# Используем npx, потому что railway не поднимает глобальные bin'ы
+# Запускаем через npx (гарантирует запуск даже если PATH сломан)
 CMD ["npx", "n8n"]
