@@ -11,8 +11,6 @@ RUN npm install -g n8n
 # Установка рабочей директории
 WORKDIR /data
 
-# ❌ УДАЛЕНО: VOLUME ["/data"]
-
 # Порт
 EXPOSE 5678
 
