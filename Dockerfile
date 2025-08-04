@@ -17,4 +17,4 @@ WORKDIR /home/node
 EXPOSE 5678
 
 # Запускаем n8n через npx, т.к. Railway может терять глобальные бинари
-CMD ["npx", "n8n"]
+CMD ["n8n"]
