@@ -1,26 +1,28 @@
-FROM node:20-bullseye-slim
+# ✅ Node 18 совместим с n8n@1.41.1
+FROM node:18-bullseye-slim
 
-# Установка зависимостей
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# 🧰 Установка зависимостей
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends \
     ffmpeg \
     curl \
     git \
     build-essential \
     python3 \
     cmake \
- && apt-get clean && rm -rf /var/lib/apt/lists/*
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Установка n8n
-RUN npm install -g n8n@latest
+# 📦 Установка стабильной версии n8n
+RUN npm install -g n8n@1.41.1
 
-# Рабочая директория
-WORKDIR /home/node/.n8n
+# 🏠 Рабочая директория
+WORKDIR /home/node
 
-# Обязательный Volume для Railway
+# 📁 Создаём volume на .n8n
 VOLUME ["/home/node/.n8n"]
 
-# Открытие порта
+# 📡 Порт n8n
 EXPOSE 5678
 
-# Запуск n8n
-CMD ["n8n"]
+# 🚀 Команда запуска
+CMD ["n8n", "start"]
