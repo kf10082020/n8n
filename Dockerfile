@@ -1,4 +1,4 @@
-FROM node:18-slim
+FROM node:20-bullseye-slim
 
 # Установка зависимостей
 RUN apt-get update && \
