@@ -21,3 +21,4 @@ node_modules
 # 🧪 Cypress и тестовые данные
 cypress/
 test-workflows/
+!Dockerfile/
