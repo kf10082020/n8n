@@ -9,6 +9,7 @@ yarn.lock
 google-generated-credentials.json
 _START_PACKAGE
 .env
+.n8n
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.default.json
