@@ -15,4 +15,5 @@ WORKDIR /data
 EXPOSE 5678
 
 # Запуск n8n
-CMD ["n8n"]
+CMD ["n8n", "start"]
+
