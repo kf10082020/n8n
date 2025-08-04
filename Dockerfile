@@ -16,4 +16,4 @@ WORKDIR /n8n-data
 EXPOSE 443
 
 # 🧪 По умолчанию запустить миграции и потом старт
-CMD n8n migrate:up && n8n start
+CMD n8n start
