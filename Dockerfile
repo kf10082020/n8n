@@ -24,4 +24,4 @@ ENV N8N_USER_FOLDER=/data
 EXPOSE 5678
 
 # Запуск n8n
-CMD ["n8n"]
+CMD [ "sh", "-c", "n8n"]
