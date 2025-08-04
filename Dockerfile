@@ -1,19 +1,23 @@
-# ✅ Базовый образ
+# Используем стабильный node-образ
 FROM node:18-bullseye-slim
 
-# 🧱 Установка зависимостей
-RUN apt-get update && apt-get install -y \
-  ffmpeg curl git build-essential python3 sqlite3 \
-  && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Установка зависимостей
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends \
+  ffmpeg curl git build-essential python3 && \
+  apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 📦 Установка n8n
-RUN npm install -g n8n@1.41.1
+# Устанавливаем n8n
+RUN npm install -g n8n
 
-# 🗂 Рабочая директория
-WORKDIR /n8n-data
+# Создаём рабочую директорию
+WORKDIR /home/node
 
-# ✅ Порт для HTTPS
-EXPOSE 443
+# Открываем порт
+EXPOSE 5678
 
-# 🧪 По умолчанию запустить миграции и потом старт
-CMD n8n start
+# Указываем volume для n8n данных
+VOLUME ["/home/node/.n8n"]
+
+# Запускаем n8n
+CMD ["n8n"]
