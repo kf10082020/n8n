@@ -27,3 +27,4 @@ build-storybook.log
 junit.xml
 test-results.json
 *.0x
+.env
