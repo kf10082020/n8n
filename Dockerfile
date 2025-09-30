@@ -9,11 +9,10 @@ RUN apt-get update && \
 RUN npm install -g n8n
 
 # Установка рабочей директории
-WORKDIR /data
+WORKDIR /app   # <-- заменили /data на /app
 
 # Порт
 EXPOSE 5678
 
 # Запуск n8n
 CMD ["n8n", "start"]
-
